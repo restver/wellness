@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -21,9 +23,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.outlined.Circle
 import androidx.compose.material3.Card
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -469,7 +474,8 @@ private fun CalendarGrid(
             }
 
             // Days of the month
-            items(daysInMonth) { day ->
+            items(daysInMonth) { index ->
+                val day = index + 1  // items索引从0开始，日期从1开始，需要+1
                 val date = currentMonth.atDay(day)
                 val isSelected = date == selectedDate
                 val isToday = date == java.time.LocalDate.now()
@@ -558,6 +564,7 @@ fun StatsTabHomeScreen(
     viewModel: StatsViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val selectedPeriod by viewModel.selectedPeriod.collectAsState()
 
     Box(modifier = Modifier.fillMaxSize()) {
         when (val state = uiState) {
@@ -567,6 +574,8 @@ fun StatsTabHomeScreen(
             is StatsUiState.Success -> {
                 StatsTabContent(
                     stats = state.stats,
+                    selectedPeriod = selectedPeriod,
+                    onSelectPeriod = viewModel::loadStats,
                     onNavigateToDetails = {
                         navController.navigate(StatsRoute.Details.route)
                     }
@@ -585,6 +594,8 @@ fun StatsTabHomeScreen(
 @Composable
 private fun StatsTabContent(
     stats: com.studyai.wellness.data.model.StatsDto,
+    selectedPeriod: String,
+    onSelectPeriod: (String) -> Unit,
     onNavigateToDetails: () -> Unit
 ) {
     Column(
@@ -592,53 +603,259 @@ private fun StatsTabContent(
             .fillMaxSize()
             .background(Background)
     ) {
-        Spacer(modifier = Modifier.height(16.dp))
+        androidx.compose.foundation.rememberScrollState().let {
+            LazyColumn(
+                modifier = Modifier.weight(1f),
+                contentPadding = androidx.compose.foundation.layout.PaddingValues(24.dp),
+                verticalArrangement = Arrangement.spacedBy(20.dp)
+            ) {
+                // Header
+                item {
+                    Text(
+                        text = "Statistics",
+                        color = TextPrimary,
+                        fontSize = 32.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
 
-        LazyColumn(
-            modifier = Modifier.weight(1f),
-            contentPadding = androidx.compose.foundation.layout.PaddingValues(24.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            item {
-                Text(
-                    text = "Statistics",
-                    color = TextPrimary,
-                    fontSize = 32.sp,
-                    fontWeight = FontWeight.Bold
-                )
-            }
+                item {
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
 
-            items(stats.overview) { metric ->
-                AppMetricCard(
-                    title = metric.title,
-                    value = metric.value,
-                    subtitle = "Tap for details"
-                )
-            }
-
-            item {
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { onNavigateToDetails() },
-                    shape = RoundedCornerShape(16.dp),
-                    colors = CardDefaults.cardColors(containerColor = PrimaryGreen)
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(20.dp),
-                        contentAlignment = Alignment.Center
+                // Period Selector
+                item {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Text(
-                            text = "View Detailed Stats",
-                            color = Color.White,
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold
+                        PeriodButton(
+                            text = "Week",
+                            isSelected = selectedPeriod == "week",
+                            onClick = { onSelectPeriod("week") },
+                            modifier = Modifier.weight(1f)
+                        )
+                        PeriodButton(
+                            text = "Month",
+                            isSelected = selectedPeriod == "month",
+                            onClick = { onSelectPeriod("month") },
+                            modifier = Modifier.weight(1f)
+                        )
+                        PeriodButton(
+                            text = "Year",
+                            isSelected = selectedPeriod == "year",
+                            onClick = { onSelectPeriod("year") },
+                            modifier = Modifier.weight(1f)
                         )
                     }
                 }
+
+                item {
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
+
+                // Summary Cards - Show overview metrics
+                item {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        stats.overview.forEach {
+                            Column(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .background(Color.White, RoundedCornerShape(16.dp))
+                                    .padding(16.dp),
+                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                Text(
+                                    text = it.title,
+                                    color = TextSecondary,
+                                    fontSize = 12.sp
+                                )
+                                Text(
+                                    text = it.value,
+                                    color = TextPrimary,
+                                    fontSize = 20.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                        }
+                    }
+                }
+
+                // Charts Section
+                item {
+                    Text(
+                        text = "Weekly Activity",
+                        color = TextPrimary,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
+
+                item {
+                    ActivityChart(weeklyStats = stats.weeklyStats)
+                }
+
+                // Goals Progress
+                item {
+                    Text(
+                        text = "Goals Progress",
+                        color = TextPrimary,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
+
+                items(stats.goals) { goal ->
+                    GoalProgressItem(
+                        title = goal.title,
+                        progress = goal.current.toInt(),
+                        target = goal.target.toInt(),
+                        unit = goal.unit
+                    )
+                }
             }
+        }
+    }
+}
+
+@Composable
+private fun PeriodButton(
+    text: String,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    androidx.compose.material3.Button(
+        onClick = onClick,
+        modifier = modifier.height(40.dp),
+        colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+            containerColor = if (isSelected) PrimaryGreen else Color.White,
+            contentColor = if (isSelected) Color.White else TextSecondary
+        ),
+        shape = RoundedCornerShape(12.dp)
+    ) {
+        Text(
+            text = text,
+            fontSize = 14.sp,
+            fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal
+        )
+    }
+}
+
+@Composable
+private fun SummaryCard(
+    title: String,
+    value: String,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .background(Color.White, RoundedCornerShape(16.dp))
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Text(
+            text = title,
+            color = TextSecondary,
+            fontSize = 12.sp
+        )
+        Text(
+            text = value,
+            color = TextPrimary,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold
+        )
+    }
+}
+
+@Composable
+private fun ActivityChart(weeklyStats: List<com.studyai.wellness.data.model.WeeklyStatDto>) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.White, RoundedCornerShape(16.dp))
+            .padding(20.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.Bottom
+        ) {
+            weeklyStats.forEach { stat ->
+                val maxHeight = 100.dp
+                val ratio = (stat.value / stat.target).toFloat().coerceIn(0.2f, 1f)
+                val barHeight = maxHeight * ratio
+
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .width(24.dp)
+                            .height(barHeight)
+                            .background(
+                                PrimaryGreen.copy(alpha = 0.8f),
+                                RoundedCornerShape(8.dp)
+                            )
+                    )
+                    Text(
+                        text = stat.label.take(3),
+                        color = TextSecondary,
+                        fontSize = 11.sp
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun GoalProgressItem(
+    title: String,
+    progress: Int,
+    target: Int,
+    unit: String
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.White, RoundedCornerShape(16.dp))
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = title,
+                color = TextPrimary,
+                fontSize = 15.sp,
+                fontWeight = FontWeight.Medium
+            )
+            Text(
+                text = "$progress/$target $unit",
+                color = TextSecondary,
+                fontSize = 13.sp
+            )
+        }
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(8.dp)
+                .background(Color(0xFFEDECEA), RoundedCornerShape(4.dp))
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth((progress.toFloat() / target).coerceIn(0f, 1f))
+                    .height(8.dp)
+                    .background(PrimaryGreen, RoundedCornerShape(4.dp))
+            )
         }
     }
 }
@@ -824,91 +1041,98 @@ fun SettingsTabHomeScreen(
 ) {
     val notificationsEnabled by viewModel.notificationsEnabled.collectAsState()
     val darkModeEnabled by viewModel.darkModeEnabled.collectAsState()
+    val selectedLanguage by viewModel.selectedLanguage.collectAsState()
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Background)
     ) {
-        Spacer(modifier = Modifier.height(16.dp))
-
-        LazyColumn(
-            modifier = Modifier.weight(1f),
-            contentPadding = androidx.compose.foundation.layout.PaddingValues(24.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            item {
+        androidx.compose.foundation.rememberScrollState().let {
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .verticalScroll(it)
+                    .padding(24.dp),
+                verticalArrangement = Arrangement.spacedBy(20.dp)
+            ) {
+                // Header
                 Text(
                     text = "Settings",
                     color = TextPrimary,
                     fontSize = 32.sp,
                     fontWeight = FontWeight.Bold
                 )
-            }
 
-            item {
-                SettingItemCard(
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // Notifications Section
+                Text(
+                    text = "Notifications",
+                    color = TextSecondary,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Medium
+                )
+
+                SettingItem(
                     title = "Push Notifications",
-                    value = if (notificationsEnabled) "Enabled" else "Disabled"
+                    description = "Receive notifications on your device",
+                    enabled = notificationsEnabled,
+                    onToggle = viewModel::toggleNotifications
                 )
-            }
 
-            item {
-                SettingItemCard(
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // Appearance Section
+                Text(
+                    text = "Appearance",
+                    color = TextSecondary,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Medium
+                )
+
+                SettingItem(
                     title = "Dark Mode",
-                    value = if (darkModeEnabled) "Enabled" else "Disabled"
+                    description = "Use dark theme",
+                    enabled = darkModeEnabled,
+                    onToggle = viewModel::toggleDarkMode
                 )
-            }
 
-            item {
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {
-                            navController.navigate(SettingsRoute.About.route)
-                        },
-                    shape = RoundedCornerShape(16.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White)
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text(
-                            text = "About",
-                            color = TextPrimary,
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Medium
-                        )
-                        Text(
-                            text = ">",
-                            color = TextSecondary,
-                            fontSize = 16.sp
-                        )
-                    }
-                }
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // Language Section
+                Text(
+                    text = "Language",
+                    color = TextSecondary,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Medium
+                )
+
+                LanguageItem(
+                    currentLanguage = selectedLanguage,
+                    onSelectLanguage = viewModel::selectLanguage
+                )
             }
         }
     }
 }
 
 @Composable
-private fun SettingItemCard(
+private fun SettingItem(
     title: String,
-    value: String
+    description: String,
+    enabled: Boolean,
+    onToggle: (Boolean) -> Unit
 ) {
-    Card(
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.White, RoundedCornerShape(16.dp))
+            .padding(16.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
+        Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = title,
                 color = TextPrimary,
@@ -916,9 +1140,88 @@ private fun SettingItemCard(
                 fontWeight = FontWeight.Medium
             )
             Text(
-                text = value,
+                text = description,
                 color = TextSecondary,
-                fontSize = 14.sp
+                fontSize = 13.sp
+            )
+        }
+        Switch(
+            checked = enabled,
+            onCheckedChange = onToggle,
+            colors = SwitchDefaults.colors(
+                checkedThumbColor = PrimaryGreen,
+                checkedTrackColor = PrimaryGreen.copy(alpha = 0.5f),
+                uncheckedThumbColor = Color.Gray,
+                uncheckedTrackColor = Color.Gray.copy(alpha = 0.5f)
+            )
+        )
+    }
+}
+
+@Composable
+private fun LanguageItem(
+    currentLanguage: String,
+    onSelectLanguage: (String) -> Unit
+) {
+    val languages = listOf(
+        "en" to "English",
+        "es" to "Español",
+        "fr" to "Français",
+        "de" to "Deutsch",
+        "zh" to "中文"
+    )
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.White, RoundedCornerShape(16.dp))
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        Text(
+            text = "App Language",
+            color = TextPrimary,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Medium
+        )
+        languages.forEach { (code, name) ->
+            LanguageOption(
+                name = name,
+                selected = currentLanguage == code,
+                onClick = { onSelectLanguage(code) }
+            )
+        }
+    }
+}
+
+@Composable
+private fun LanguageOption(
+    name: String,
+    selected: Boolean,
+    onClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(
+                if (selected) PrimaryGreen.copy(alpha = 0.1f) else Color.Transparent,
+                RoundedCornerShape(8.dp)
+            )
+            .padding(12.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = name,
+            color = if (selected) PrimaryGreen else TextPrimary,
+            fontSize = 14.sp,
+            fontWeight = if (selected) FontWeight.Medium else FontWeight.Normal
+        )
+        if (selected) {
+            Icon(
+                imageVector = Icons.Filled.Check,
+                contentDescription = null,
+                tint = PrimaryGreen
             )
         }
     }

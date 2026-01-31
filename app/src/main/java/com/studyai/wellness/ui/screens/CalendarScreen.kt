@@ -219,7 +219,8 @@ private fun CalendarGrid(
             }
 
             // Days of the month
-            items(daysInMonth) { day ->
+            items(daysInMonth) { index ->
+                val day = index + 1  // items索引从0开始，日期从1开始，需要+1
                 val date = currentMonth.atDay(day)
                 val isSelected = date == selectedDate
                 val isToday = date == LocalDate.now()

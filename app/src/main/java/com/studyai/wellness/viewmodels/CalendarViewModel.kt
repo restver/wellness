@@ -12,11 +12,11 @@ import javax.inject.Inject
 @HiltViewModel
 class CalendarViewModel @Inject constructor() : ViewModel() {
 
-    private val _selectedDate = MutableStateFlow(LocalDate.now())
-    val selectedDate: StateFlow<LocalDate> = _selectedDate.asStateFlow()
+    private val _selectedDate = MutableStateFlow<LocalDate>(LocalDate.now())
+    val selectedDate: StateFlow<LocalDate> = _selectedDate
 
-    private val _currentMonth = MutableStateFlow(YearMonth.now())
-    val currentMonth: StateFlow<YearMonth> = _currentMonth.asStateFlow()
+    private val _currentMonth = MutableStateFlow<YearMonth>(YearMonth.now())
+    val currentMonth: StateFlow<YearMonth> = _currentMonth
 
     fun selectDate(date: LocalDate) {
         _selectedDate.value = date
