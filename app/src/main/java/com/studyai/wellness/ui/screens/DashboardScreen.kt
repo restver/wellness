@@ -33,7 +33,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.studyai.wellness.ui.components.AppBottomTabBar
 import com.studyai.wellness.ui.components.AppMetricCard
-import com.studyai.wellness.ui.components.AppStatusBar
 import com.studyai.wellness.ui.components.FullScreenLoading
 import com.studyai.wellness.ui.theme.Background
 import com.studyai.wellness.ui.theme.PrimaryGreen
@@ -95,7 +94,6 @@ private fun DashboardContent(
             .fillMaxSize()
             .background(Background)
     ) {
-        AppStatusBar()
 
         LazyColumn(
             modifier = Modifier.weight(1f),

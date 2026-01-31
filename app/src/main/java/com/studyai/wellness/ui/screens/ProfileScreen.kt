@@ -1,7 +1,6 @@
 package com.studyai.wellness.ui.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,10 +11,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -32,8 +33,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.studyai.wellness.ui.components.AppBottomTabBar
 import com.studyai.wellness.ui.components.AppPrimaryButton
-import com.studyai.wellness.ui.components.AppStatusBar
-import com.studyai.wellness.ui.components.FullScreenLoading
 import com.studyai.wellness.ui.theme.Background
 import com.studyai.wellness.ui.theme.PrimaryGreen
 import com.studyai.wellness.ui.theme.TextPrimary
@@ -44,7 +43,11 @@ import com.studyai.wellness.viewmodels.ProfileUiState
 @Composable
 fun ProfileScreen(
     viewModel: ProfileViewModel = hiltViewModel(),
-    onNavigateBack: () -> Unit = {},
+    onNavigateToDashboard: () -> Unit = {},
+    onNavigateToSettings: () -> Unit = {},
+    onNavigateToCalendar: () -> Unit = {},
+    onNavigateToStats: () -> Unit = {},
+    onNavigateToNotifications: () -> Unit = {},
     onLogout: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -52,12 +55,17 @@ fun ProfileScreen(
     Box(modifier = Modifier.fillMaxSize()) {
         when (val state = uiState) {
             is ProfileUiState.Loading -> {
-                FullScreenLoading()
+                com.studyai.wellness.ui.components.FullScreenLoading()
             }
             is ProfileUiState.Success -> {
                 ProfileContent(
                     user = state.user,
-                    onLogout = onLogout
+                    onLogout = onLogout,
+                    onNavigateToDashboard = onNavigateToDashboard,
+                    onNavigateToSettings = onNavigateToSettings,
+                    onNavigateToCalendar = onNavigateToCalendar,
+                    onNavigateToStats = onNavigateToStats,
+                    onNavigateToNotifications = onNavigateToNotifications
                 )
             }
             is ProfileUiState.Error -> {
@@ -73,200 +81,140 @@ fun ProfileScreen(
 @Composable
 private fun ProfileContent(
     user: com.studyai.wellness.data.model.UserDto,
-    onLogout: () -> Unit
+    onLogout: () -> Unit,
+    onNavigateToDashboard: () -> Unit,
+    onNavigateToSettings: () -> Unit,
+    onNavigateToCalendar: () -> Unit,
+    onNavigateToStats: () -> Unit,
+    onNavigateToNotifications: () -> Unit
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Background)
     ) {
-        AppStatusBar()
 
-        LazyColumnWithFooter(
-            modifier = Modifier.weight(1f),
-            content = {
-                // Header
-                item {
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .verticalScroll(rememberScrollState())
+                .padding(24.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp)
+        ) {
+            // Header
+            Text(
+                text = "My Profile",
+                color = TextPrimary,
+                fontSize = 32.sp,
+                fontWeight = FontWeight.Bold
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Profile Card
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color.White, RoundedCornerShape(20.dp))
+                    .padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(100.dp)
+                        .clip(CircleShape)
+                        .background(PrimaryGreen),
+                    contentAlignment = Alignment.Center
+                ) {
                     Text(
-                        text = "Profile",
-                        color = TextPrimary,
-                        fontSize = 26.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        letterSpacing = (-0.5).sp,
-                        modifier = Modifier.padding(20.dp, 24.dp, 16.dp, 24.dp)
+                        text = user.name.first().toString(),
+                        color = Color.White,
+                        fontSize = 40.sp,
+                        fontWeight = FontWeight.Bold
                     )
                 }
 
-                // Profile card
-                item {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(Color.White, RoundedCornerShape(16.dp))
-                            .padding(32.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(80.dp)
-                                .clip(CircleShape)
-                                .background(PrimaryGreen),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = user.name.first().toString(),
-                                color = Color.White,
-                                fontSize = 36.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                        Text(
-                            text = user.name,
-                            color = TextPrimary,
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                        Text(
-                            text = user.email,
-                            color = TextSecondary,
-                            fontSize = 14.sp
-                        )
-                    }
-                }
-
-                // Account section
-                item {
-                    Text(
-                        text = "Account",
-                        color = TextPrimary,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp)
-                    )
-                }
-
-                item {
-                    ProfileMenuItem(
-                        icon = "👤",
-                        title = "Personal Information",
-                        subtitle = "Update your personal details"
-                    )
-                }
-
-                item {
-                    ProfileMenuItem(
-                        icon = "🔒",
-                        title = "Password",
-                        subtitle = "Change your password"
-                    )
-                }
-
-                // Preferences section
-                item {
-                    Text(
-                        text = "Preferences",
-                        color = TextPrimary,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp)
-                    )
-                }
-
-                item {
-                    ProfileMenuItem(
-                        icon = "🔔",
-                        title = "Notifications",
-                        subtitle = if (user.preferences.notificationsEnabled) "Enabled" else "Disabled"
-                    )
-                }
-
-                item {
-                    ProfileMenuItem(
-                        icon = "🌙",
-                        title = "Dark Mode",
-                        subtitle = if (user.preferences.darkMode) "Enabled" else "Disabled"
-                    )
-                }
-
-                item {
-                    ProfileMenuItem(
-                        icon = "🌐",
-                        title = "Language",
-                        subtitle = user.preferences.language
-                    )
-                }
-
-                // Logout button
-                item {
-                    AppPrimaryButton(
-                        text = "Log Out",
-                        onClick = onLogout,
-                        modifier = Modifier.padding(24.dp)
-                    )
-                }
-            },
-            footer = {
-                AppBottomTabBar(
-                    currentRoute = "profile",
-                    onTabSelected = {}
+                Text(
+                    text = user.name,
+                    color = TextPrimary,
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold
                 )
+
+                Text(
+                    text = user.email,
+                    color = TextSecondary,
+                    fontSize = 14.sp
+                )
+
+                IconButton(
+                    onClick = { /* TODO: Navigate to edit profile */ },
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .background(PrimaryGreen.copy(alpha = 0.1f))
+                        .padding(8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Edit,
+                        contentDescription = "Edit Profile",
+                        tint = PrimaryGreen
+                    )
+                }
+            }
+
+            // Info Section
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color.White, RoundedCornerShape(16.dp))
+                    .padding(20.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                ProfileInfoItem(label = "Member Since", value = "January 2024")
+                ProfileInfoItem(label = "Notifications", value = if (user.preferences.notificationsEnabled) "Enabled" else "Disabled")
+                ProfileInfoItem(label = "Theme", value = if (user.preferences.darkMode) "Dark" else "Light")
+            }
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            AppPrimaryButton(
+                text = "Log Out",
+                onClick = onLogout
+            )
+        }
+
+        AppBottomTabBar(
+            currentRoute = "profile",
+            onTabSelected = { route ->
+                when (route) {
+                    "dashboard" -> onNavigateToDashboard()
+                    "settings" -> onNavigateToSettings()
+                    "calendar" -> onNavigateToCalendar()
+                    "stats" -> onNavigateToStats()
+                    "notifications" -> onNavigateToNotifications()
+                }
             }
         )
     }
 }
 
 @Composable
-private fun ProfileMenuItem(
-    icon: String,
-    title: String,
-    subtitle: String,
-    onClick: () -> Unit = {}
-) {
+private fun ProfileInfoItem(label: String, value: String) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Color.White, RoundedCornerShape(16.dp))
-            .padding(16.dp)
-            .clickable(onClick = onClick),
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-        verticalAlignment = Alignment.CenterVertically
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
-            text = icon,
-            fontSize = 24.sp
+            text = label,
+            color = TextSecondary,
+            fontSize = 14.sp
         )
-        Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = title,
-                color = TextPrimary,
-                fontSize = 15.sp,
-                fontWeight = FontWeight.Medium
-            )
-            Text(
-                text = subtitle,
-                color = TextSecondary,
-                fontSize = 13.sp
-            )
-        }
         Text(
-            text = ">",
-            color = TextSecondary
+            text = value,
+            color = TextPrimary,
+            fontSize = 15.sp,
+            fontWeight = FontWeight.Medium
         )
-    }
-}
-
-@Composable
-private fun LazyColumnWithFooter(
-    modifier: Modifier = Modifier,
-    content: androidx.compose.foundation.lazy.LazyListScope.() -> Unit,
-    footer: @Composable () -> Unit
-) {
-    Column(modifier = modifier) {
-        androidx.compose.foundation.lazy.LazyColumn(
-            contentPadding = androidx.compose.foundation.layout.PaddingValues(bottom = 100.dp),
-            content = content
-        )
-        footer()
     }
 }

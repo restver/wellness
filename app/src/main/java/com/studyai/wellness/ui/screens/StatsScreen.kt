@@ -1,7 +1,6 @@
 package com.studyai.wellness.ui.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,20 +12,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,9 +28,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.studyai.wellness.ui.components.AppMetricCard
-import com.studyai.wellness.ui.components.AppStatusBar
-import com.studyai.wellness.ui.components.FullScreenLoading
+import com.studyai.wellness.ui.components.AppBottomTabBar
 import com.studyai.wellness.ui.theme.Background
 import com.studyai.wellness.ui.theme.PrimaryGreen
 import com.studyai.wellness.ui.theme.TextPrimary
@@ -47,116 +39,31 @@ import com.studyai.wellness.viewmodels.StatsUiState
 @Composable
 fun StatsScreen(
     viewModel: StatsViewModel = hiltViewModel(),
-    onNavigateBack: () -> Unit = {}
+    onNavigateToDashboard: () -> Unit = {},
+    onNavigateToSettings: () -> Unit = {},
+    onNavigateToProfile: () -> Unit = {},
+    onNavigateToCalendar: () -> Unit = {},
+    onNavigateToNotifications: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val selectedPeriod by viewModel.selectedPeriod.collectAsState()
-    var selectedTabIndex by remember { mutableIntStateOf(0) }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Background)
-    ) {
-        AppStatusBar()
-
-        // Header
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(20.dp, 24.dp, 16.dp, 24.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            IconButton(
-                onClick = onNavigateBack,
-                modifier = Modifier.size(40.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Back",
-                    tint = TextPrimary
-                )
-            }
-
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = "Statistics",
-                    color = TextPrimary,
-                    fontSize = 26.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    letterSpacing = (-0.5).sp
-                )
-            }
-
-            Box(
-                modifier = Modifier
-                    .size(40.dp)
-                    .background(Color.White, RoundedCornerShape(12.dp)),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "⋯",
-                    color = TextPrimary
-                )
-            }
-        }
-
-        // Time period selector
-        val periods = listOf("Day", "Week", "Month", "Year")
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(40.dp)
-                .padding(horizontal = 24.dp)
-                .background(Color(0xFFEDECEA), RoundedCornerShape(12.dp))
-                .padding(4.dp)
-        ) {
-            periods.forEachIndexed { index, period ->
-                val isSelected = selectedTabIndex == index
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .then(
-                            if (isSelected) {
-                                Modifier.background(
-                                    Color.White,
-                                    RoundedCornerShape(8.dp)
-                                )
-                            } else {
-                                Modifier
-                            }
-                        )
-                        .clickable {
-                            selectedTabIndex = index
-                            val periodMap = mapOf(0 to "day", 1 to "week", 2 to "month", 3 to "year")
-                            viewModel.loadStats(periodMap[index] ?: "week")
-                        }
-                        .padding(vertical = 6.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = period,
-                        color = if (isSelected) PrimaryGreen else TextSecondary,
-                        fontSize = 13.sp,
-                        fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal
-                    )
-                }
-            }
-        }
-
-        Spacer(modifier = Modifier.height(24.dp))
-
+    Box(modifier = Modifier.fillMaxSize()) {
         when (val state = uiState) {
             is StatsUiState.Loading -> {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    com.studyai.wellness.ui.components.InlineLoading()
-                }
+                com.studyai.wellness.ui.components.FullScreenLoading()
             }
             is StatsUiState.Success -> {
-                StatsContent(stats = state.stats)
+                StatsContent(
+                    stats = state.stats,
+                    selectedPeriod = selectedPeriod,
+                    onSelectPeriod = viewModel::loadStats,
+                    onNavigateToDashboard = onNavigateToDashboard,
+                    onNavigateToSettings = onNavigateToSettings,
+                    onNavigateToProfile = onNavigateToProfile,
+                    onNavigateToCalendar = onNavigateToCalendar,
+                    onNavigateToNotifications = onNavigateToNotifications
+                )
             }
             is StatsUiState.Error -> {
                 com.studyai.wellness.ui.components.ErrorMessage(
@@ -169,177 +76,244 @@ fun StatsScreen(
 }
 
 @Composable
-private fun StatsContent(stats: com.studyai.wellness.data.model.StatsDto) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = androidx.compose.foundation.layout.PaddingValues(24.dp),
-        verticalArrangement = Arrangement.spacedBy(24.dp)
+private fun StatsContent(
+    stats: com.studyai.wellness.data.model.StatsDto,
+    selectedPeriod: String,
+    onSelectPeriod: (String) -> Unit,
+    onNavigateToDashboard: () -> Unit,
+    onNavigateToSettings: () -> Unit,
+    onNavigateToProfile: () -> Unit,
+    onNavigateToCalendar: () -> Unit,
+    onNavigateToNotifications: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Background)
     ) {
-        // Overview section
-        item {
+
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .verticalScroll(rememberScrollState())
+                .padding(24.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp)
+        ) {
+            // Header
             Text(
-                text = "Overview",
+                text = "Statistics",
+                color = TextPrimary,
+                fontSize = 32.sp,
+                fontWeight = FontWeight.Bold
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Period Selector
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                PeriodButton(
+                    text = "Week",
+                    isSelected = selectedPeriod == "week",
+                    onClick = { onSelectPeriod("week") },
+                    modifier = Modifier.weight(1f)
+                )
+                PeriodButton(
+                    text = "Month",
+                    isSelected = selectedPeriod == "month",
+                    onClick = { onSelectPeriod("month") },
+                    modifier = Modifier.weight(1f)
+                )
+                PeriodButton(
+                    text = "Year",
+                    isSelected = selectedPeriod == "year",
+                    onClick = { onSelectPeriod("year") },
+                    modifier = Modifier.weight(1f)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Summary Cards - Show overview metrics
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                stats.overview.forEach { metric ->
+                    SummaryCard(
+                        title = metric.title,
+                        value = metric.value,
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+            }
+
+            // Charts Section
+            Text(
+                text = "Weekly Activity",
                 color = TextPrimary,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.SemiBold
             )
-        }
 
-        items(stats.overview) { metric ->
-            AppMetricCard(
-                title = metric.title,
-                value = metric.value,
-                subtitle = metric.subtitle
-            )
-        }
+            ActivityChart(weeklyStats = stats.weeklyStats)
 
-        // Weekly stats
-        item {
+            // Goals Progress
             Text(
-                text = "Weekly Progress",
+                text = "Goals Progress",
                 color = TextPrimary,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.SemiBold
             )
+
+            stats.goals.forEach { goal ->
+                GoalProgressItem(
+                    title = goal.title,
+                    progress = goal.current.toInt(),
+                    target = goal.target.toInt(),
+                    unit = goal.unit
+                )
+            }
         }
 
-        items(stats.weeklyStats) { stat ->
-            WeeklyStatItem(stat = stat)
-        }
-
-        // Achievements
-        item {
-            Text(
-                text = "Achievements",
-                color = TextPrimary,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.SemiBold
-            )
-        }
-
-        items(stats.achievements) { achievement ->
-            AchievementItem(achievement = achievement)
-        }
-
-        // Goals
-        item {
-            Text(
-                text = "Goals",
-                color = TextPrimary,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.SemiBold
-            )
-        }
-
-        items(stats.goals) { goal ->
-            GoalItem(goal = goal)
-        }
+        AppBottomTabBar(
+            currentRoute = "stats",
+            onTabSelected = { route ->
+                when (route) {
+                    "dashboard" -> onNavigateToDashboard()
+                    "settings" -> onNavigateToSettings()
+                    "profile" -> onNavigateToProfile()
+                    "calendar" -> onNavigateToCalendar()
+                    "notifications" -> onNavigateToNotifications()
+                }
+            }
+        )
     }
 }
 
 @Composable
-private fun WeeklyStatItem(stat: com.studyai.wellness.data.model.WeeklyStatDto) {
+private fun PeriodButton(
+    text: String,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Button(
+        onClick = onClick,
+        modifier = modifier.height(40.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = if (isSelected) PrimaryGreen else Color.White,
+            contentColor = if (isSelected) Color.White else TextSecondary
+        ),
+        shape = RoundedCornerShape(12.dp)
+    ) {
+        Text(
+            text = text,
+            fontSize = 14.sp,
+            fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal
+        )
+    }
+}
+
+@Composable
+private fun SummaryCard(
+    title: String,
+    value: String,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .background(Color.White, RoundedCornerShape(16.dp))
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Text(
+            text = title,
+            color = TextSecondary,
+            fontSize = 12.sp
+        )
+        Text(
+            text = value,
+            color = TextPrimary,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold
+        )
+    }
+}
+
+@Composable
+private fun ActivityChart(weeklyStats: List<com.studyai.wellness.data.model.WeeklyStatDto>) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .background(Color.White, RoundedCornerShape(16.dp))
             .padding(20.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        Text(
-            text = stat.label,
-            color = TextSecondary,
-            fontSize = 13.sp
-        )
         Row(
             modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.Bottom
         ) {
-            Text(
-                text = "${stat.value.toInt()}",
-                color = TextPrimary,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.weight(1f)
-            )
-            Text(
-                text = "Target: ${stat.target.toInt()}",
-                color = TextSecondary,
-                fontSize = 14.sp
-            )
-        }
-        // Progress bar
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(8.dp)
-                .background(Color(0xFFEDECEA), RoundedCornerShape(4.dp))
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth((stat.value / stat.target).toFloat().coerceIn(0f, 1f))
-                    .height(8.dp)
-                    .background(PrimaryGreen, RoundedCornerShape(4.dp))
-            )
+            weeklyStats.forEach { stat ->
+                val maxHeight = 100.dp
+                val ratio = (stat.value / stat.target).toFloat().coerceIn(0.2f, 1f)
+                val barHeight = maxHeight * ratio
+
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .width(24.dp)
+                            .height(barHeight)
+                            .background(
+                                PrimaryGreen.copy(alpha = 0.8f),
+                                RoundedCornerShape(8.dp)
+                            )
+                    )
+                    Text(
+                        text = stat.label.take(3),
+                        color = TextSecondary,
+                        fontSize = 11.sp
+                    )
+                }
+            }
         }
     }
 }
 
 @Composable
-private fun AchievementItem(achievement: com.studyai.wellness.data.model.AchievementDto) {
-    Row(
+private fun GoalProgressItem(
+    title: String,
+    progress: Int,
+    target: Int,
+    unit: String
+) {
+    Column(
         modifier = Modifier
             .fillMaxWidth()
             .background(Color.White, RoundedCornerShape(16.dp))
             .padding(16.dp),
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = achievement.icon,
-            fontSize = 32.sp
-        )
-        Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = achievement.title,
-                color = TextPrimary,
-                fontSize = 15.sp,
-                fontWeight = FontWeight.SemiBold
-            )
-            Text(
-                text = achievement.description,
-                color = TextSecondary,
-                fontSize = 13.sp
-            )
-        }
-    }
-}
-
-@Composable
-private fun GoalItem(goal: com.studyai.wellness.data.model.GoalDto) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Color.White, RoundedCornerShape(16.dp))
-            .padding(20.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = goal.title,
+                text = title,
                 color = TextPrimary,
                 fontSize = 15.sp,
-                fontWeight = FontWeight.SemiBold,
-                modifier = Modifier.weight(1f)
+                fontWeight = FontWeight.Medium
             )
             Text(
-                text = "${goal.current.toInt()}/${goal.target.toInt()} ${goal.unit}",
-                color = PrimaryGreen,
-                fontSize = 13.sp,
-                fontWeight = FontWeight.Medium
+                text = "$progress/$target $unit",
+                color = TextSecondary,
+                fontSize = 13.sp
             )
         }
         Box(
@@ -350,7 +324,7 @@ private fun GoalItem(goal: com.studyai.wellness.data.model.GoalDto) {
         ) {
             Box(
                 modifier = Modifier
-                    .fillMaxWidth((goal.current / goal.target).toFloat().coerceIn(0f, 1f))
+                    .fillMaxWidth((progress.toFloat() / target).coerceIn(0f, 1f))
                     .height(8.dp)
                     .background(PrimaryGreen, RoundedCornerShape(4.dp))
             )

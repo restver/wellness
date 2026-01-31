@@ -1,8 +1,6 @@
 package com.studyai.wellness.ui.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,22 +15,23 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.studyai.wellness.ui.components.AppBottomTabBar
-import com.studyai.wellness.ui.components.AppStatusBar
-import com.studyai.wellness.ui.components.AppTextButton
-import com.studyai.wellness.ui.components.FullScreenLoading
+import com.studyai.wellness.ui.components.AppPrimaryButton
 import com.studyai.wellness.ui.theme.Background
 import com.studyai.wellness.ui.theme.PrimaryGreen
 import com.studyai.wellness.ui.theme.TextPrimary
@@ -43,20 +42,29 @@ import com.studyai.wellness.viewmodels.NotificationsUiState
 @Composable
 fun NotificationsScreen(
     viewModel: NotificationsViewModel = hiltViewModel(),
-    onNavigateBack: () -> Unit = {}
+    onNavigateToDashboard: () -> Unit = {},
+    onNavigateToSettings: () -> Unit = {},
+    onNavigateToProfile: () -> Unit = {},
+    onNavigateToCalendar: () -> Unit = {},
+    onNavigateToStats: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
     Box(modifier = Modifier.fillMaxSize()) {
         when (val state = uiState) {
             is NotificationsUiState.Loading -> {
-                FullScreenLoading()
+                com.studyai.wellness.ui.components.FullScreenLoading()
             }
             is NotificationsUiState.Success -> {
                 NotificationsContent(
                     notifications = state.notifications,
                     onMarkAsRead = viewModel::markAsRead,
-                    onMarkAllAsRead = viewModel::markAllAsRead
+                    onMarkAllAsRead = viewModel::markAllAsRead,
+                    onNavigateToDashboard = onNavigateToDashboard,
+                    onNavigateToSettings = onNavigateToSettings,
+                    onNavigateToProfile = onNavigateToProfile,
+                    onNavigateToCalendar = onNavigateToCalendar,
+                    onNavigateToStats = onNavigateToStats
                 )
             }
             is NotificationsUiState.Error -> {
@@ -73,65 +81,118 @@ fun NotificationsScreen(
 private fun NotificationsContent(
     notifications: List<com.studyai.wellness.data.model.NotificationGroupDto>,
     onMarkAsRead: (String) -> Unit,
-    onMarkAllAsRead: () -> Unit
+    onMarkAllAsRead: () -> Unit,
+    onNavigateToDashboard: () -> Unit,
+    onNavigateToSettings: () -> Unit,
+    onNavigateToProfile: () -> Unit,
+    onNavigateToCalendar: () -> Unit,
+    onNavigateToStats: () -> Unit
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Background)
     ) {
-        AppStatusBar()
 
-        // Header
-        Row(
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(20.dp, 24.dp, 16.dp, 24.dp),
-            verticalAlignment = Alignment.CenterVertically
+                .weight(1f)
         ) {
-            Text(
-                text = "Notifications",
-                color = TextPrimary,
-                fontSize = 26.sp,
-                fontWeight = FontWeight.SemiBold,
-                letterSpacing = (-0.5).sp,
-                modifier = Modifier.weight(1f)
-            )
-            AppTextButton(
-                text = "Mark all read",
-                onClick = onMarkAllAsRead
-            )
-        }
+            // Header
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(24.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Notifications",
+                    color = TextPrimary,
+                    fontSize = 32.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
 
-        LazyColumn(
-            modifier = Modifier.weight(1f),
-            contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 24.dp),
-            verticalArrangement = Arrangement.spacedBy(24.dp)
-        ) {
-            notifications.forEach { group ->
-                item {
-                    Text(
-                        text = group.date,
-                        color = TextSecondary,
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.Medium,
-                        modifier = Modifier.padding(vertical = 8.dp)
+            // Mark all as read button
+            if (notifications.any { it.notifications.any { !it.read } }) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    AppPrimaryButton(
+                        text = "Mark All as Read",
+                        onClick = onMarkAllAsRead,
+                        modifier = Modifier.height(36.dp)
                     )
                 }
+                Spacer(modifier = Modifier.height(12.dp))
+            }
 
-                items(group.notifications) { notification ->
-                    NotificationItem(
-                        notification = notification,
-                        onClick = { onMarkAsRead(notification.id) }
-                    )
+            // Notifications List
+            LazyColumn(
+                modifier = Modifier.weight(1f),
+                contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 24.dp, vertical = 12.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                notifications.forEach { group ->
+                    item {
+                        NotificationGroup(
+                            group = group,
+                            onMarkAsRead = onMarkAsRead
+                        )
+                    }
                 }
             }
         }
 
         AppBottomTabBar(
             currentRoute = "notifications",
-            onTabSelected = {}
+            onTabSelected = { route ->
+                when (route) {
+                    "dashboard" -> onNavigateToDashboard()
+                    "settings" -> onNavigateToSettings()
+                    "profile" -> onNavigateToProfile()
+                    "calendar" -> onNavigateToCalendar()
+                    "stats" -> onNavigateToStats()
+                }
+            }
         )
+    }
+}
+
+@Composable
+private fun NotificationGroup(
+    group: com.studyai.wellness.data.model.NotificationGroupDto,
+    onMarkAsRead: (String) -> Unit
+) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        // Group Header
+        if (group.date.isNotEmpty()) {
+            Text(
+                text = group.date,
+                color = TextSecondary,
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Medium
+            )
+        }
+
+        // Notifications in this group
+        Column(
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            group.notifications.forEach { notification ->
+                NotificationItem(
+                    notification = notification,
+                    onClick = { onMarkAsRead(notification.id) }
+                )
+            }
+        }
     }
 }
 
@@ -144,12 +205,13 @@ private fun NotificationItem(
         modifier = Modifier
             .fillMaxWidth()
             .background(
-                if (notification.read) Color.Transparent else PrimaryGreen.copy(alpha = 0.1f),
+                if (notification.read) Color.White else PrimaryGreen.copy(alpha = 0.1f),
                 RoundedCornerShape(16.dp)
             )
-            .clickable(onClick = onClick)
-            .padding(16.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
+            .padding(16.dp)
+            .padding(vertical = 4.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         // Icon
         Box(
@@ -158,20 +220,20 @@ private fun NotificationItem(
                 .clip(CircleShape)
                 .background(
                     when (notification.type) {
-                        com.studyai.wellness.data.model.NotificationType.REMINDER -> Color(0xFF6366F1)
-                        com.studyai.wellness.data.model.NotificationType.ACHIEVEMENT -> Color(0xFFF59E0B)
-                        com.studyai.wellness.data.model.NotificationType.UPDATE -> Color(0xFF10B981)
-                        com.studyai.wellness.data.model.NotificationType.ALERT -> Color(0xFFEF4444)
+                        com.studyai.wellness.data.model.NotificationType.ACHIEVEMENT -> Color(0xFFFFD700)
+                        com.studyai.wellness.data.model.NotificationType.REMINDER -> Color(0xFF87CEEB)
+                        com.studyai.wellness.data.model.NotificationType.ALERT -> Color(0xFFFF6B6B)
+                        com.studyai.wellness.data.model.NotificationType.UPDATE -> Color(0xFF87CEEB)
                     }
                 ),
             contentAlignment = Alignment.Center
         ) {
             Text(
                 text = when (notification.type) {
-                    com.studyai.wellness.data.model.NotificationType.REMINDER -> "⏰"
                     com.studyai.wellness.data.model.NotificationType.ACHIEVEMENT -> "🏆"
-                    com.studyai.wellness.data.model.NotificationType.UPDATE -> "📢"
+                    com.studyai.wellness.data.model.NotificationType.REMINDER -> "⏰"
                     com.studyai.wellness.data.model.NotificationType.ALERT -> "⚠️"
+                    com.studyai.wellness.data.model.NotificationType.UPDATE -> "📢"
                 },
                 fontSize = 20.sp
             )
@@ -186,16 +248,12 @@ private fun NotificationItem(
                 text = notification.title,
                 color = TextPrimary,
                 fontSize = 15.sp,
-                fontWeight = if (notification.read) FontWeight.Normal else FontWeight.SemiBold,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                fontWeight = if (notification.read) FontWeight.Normal else FontWeight.SemiBold
             )
             Text(
                 text = notification.message,
                 color = TextSecondary,
-                fontSize = 13.sp,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis
+                fontSize = 13.sp
             )
             Text(
                 text = notification.createdAt,

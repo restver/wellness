@@ -3,7 +3,11 @@
     "allow": [
       "Bash(./gradlew build:*)",
       "Bash(./gradlew:*)",
-      "Bash(del:*)"
+      "Bash(del:*)",
+      "Bash(gradlew.bat build:*)",
+      "Bash(cmd:*)",
+      "Bash(./gradlew.bat build --no-daemon)",
+      "Bash(./gradlew.bat:*)"
     ]
   }
 }

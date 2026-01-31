@@ -18,7 +18,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.studyai.wellness.data.repository.UserRepository
 import com.studyai.wellness.navigation.AppNavigation
-import com.studyai.wellness.navigation.Screen
+import com.studyai.wellness.navigation.AuthScreen
 import com.studyai.wellness.ui.theme.WellnessAppTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.first
@@ -44,7 +44,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun AppRoot(userRepository: UserRepository) {
     val navController = rememberNavController()
-    val startDestination = remember { Screen.Login.route }
+    val startDestination = remember { AuthScreen.Login.route }
 
     AppNavigation(
         navController = navController,
