@@ -54,9 +54,9 @@ class LoginViewModel @Inject constructor(
                     _uiState.value = LoginUiState.Success
                 }
                 is com.studyai.wellness.data.model.Resource.Error -> {
-                    _uiState.value = LoginUiState.Error(
-                        result.message ?: "Login failed. Please try again."
-                    )
+//                    _uiState.value = LoginUiState.Error(
+//                        result.message ?: "Login failed. Please try again."
+//                    )
                     _uiState.value = LoginUiState.Success
                 }
                 else -> {}

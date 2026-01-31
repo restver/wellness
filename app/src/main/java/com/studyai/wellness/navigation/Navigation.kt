@@ -26,6 +26,7 @@ import com.studyai.wellness.viewmodels.StatsViewModel
 
 sealed class Screen(val route: String) {
     object Login : Screen("login")
+    object SignUp : Screen("signup")
     object ForgotPassword : Screen("forgot_password")
     object Dashboard : Screen("dashboard")
     object Calendar : Screen("calendar")
@@ -53,7 +54,15 @@ fun AppNavigation(
                     }
                 },
                 onNavigateToForgotPassword = {
-                    navController.navigate(Screen.ForgotPassword.route) 
+                    navController.navigate(Screen.ForgotPassword.route)
+                },
+                onNavigateToSignUp = {
+                    // For now, just show a toast message
+                    android.widget.Toast.makeText(
+                        navController.context,
+                        "Sign up feature coming soon!",
+                        android.widget.Toast.LENGTH_SHORT
+                    ).show()
                 }
             )
         }

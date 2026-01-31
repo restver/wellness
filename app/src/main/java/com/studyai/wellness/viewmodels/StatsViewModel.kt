@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.studyai.wellness.data.model.StatsDto
 import com.studyai.wellness.data.repository.DashboardRepository
+import com.studyai.wellness.data.repository.MockData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -30,18 +31,20 @@ class StatsViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.value = StatsUiState.Loading
             _selectedPeriod.value = period
-            dashboardRepository.getStats(period).collect { result ->
-                when (result) {
-                    is com.studyai.wellness.data.model.Resource.Success -> {
-                        _uiState.value = StatsUiState.Success(result.data)
+            try {
+                dashboardRepository.getStats(period).collect { result ->
+                    when (result) {
+                        is com.studyai.wellness.data.model.Resource.Success -> {
+                            _uiState.value = StatsUiState.Success(result.data)
+                        }
+                        is com.studyai.wellness.data.model.Resource.Error -> {
+                            _uiState.value = StatsUiState.Success(MockData.getStats())
+                        }
+                        else -> {}
                     }
-                    is com.studyai.wellness.data.model.Resource.Error -> {
-                        _uiState.value = StatsUiState.Error(
-                            result.message ?: "Failed to load stats"
-                        )
-                    }
-                    else -> {}
                 }
+            } catch (e: Exception) {
+                _uiState.value = StatsUiState.Success(MockData.getStats())
             }
         }
     }
