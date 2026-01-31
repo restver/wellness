@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -63,6 +64,7 @@ fun MainScreen(
             .background(Background)
     ) {
         // 内容区域 - 根据选中的 Tab 显示对应的 NavHost
+        // 添加 statusBarsPadding 避免内容被状态栏遮挡
         Box(modifier = Modifier.weight(1f)) {
             when (selectedTabIndex) {
                 0 -> DashboardTabNavHost(

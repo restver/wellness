@@ -71,8 +71,14 @@ fun WellnessAppTheme(
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.primary.toArgb()
+            // 设置状态栏为透明
+            window.statusBarColor = android.graphics.Color.TRANSPARENT
+            // 设置导航栏为透明
+            window.navigationBarColor = android.graphics.Color.TRANSPARENT
+            // 设置状态栏图标为深色（在浅色主题下）
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
+            // 设置导航栏图标为深色（在浅色主题下）
+            WindowCompat.getInsetsController(window, view).isAppearanceLightNavigationBars = !darkTheme
         }
     }
 

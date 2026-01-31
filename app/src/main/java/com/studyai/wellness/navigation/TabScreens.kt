@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.lazy.LazyColumn
@@ -107,6 +108,7 @@ private fun DashboardTabContent(
         modifier = Modifier
             .fillMaxSize()
             .background(Background)
+            .statusBarsPadding() // 添加状态栏内边距
     ) {
         LazyColumn(
             modifier = Modifier.weight(1f),
@@ -330,6 +332,7 @@ fun CalendarTabHomeScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(Background)
+            .statusBarsPadding() // 添加状态栏内边距，避免内容被遮挡
     ) {
         Column(
             modifier = Modifier
@@ -602,6 +605,7 @@ private fun StatsTabContent(
         modifier = Modifier
             .fillMaxSize()
             .background(Background)
+            .statusBarsPadding() // 添加状态栏内边距
     ) {
         androidx.compose.foundation.rememberScrollState().let {
             LazyColumn(
@@ -938,6 +942,7 @@ private fun ProfileTabContent(
         modifier = Modifier
             .fillMaxSize()
             .background(Background)
+            .statusBarsPadding() // 添加状态栏内边距
     ) {
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -1047,6 +1052,7 @@ fun SettingsTabHomeScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(Background)
+            .statusBarsPadding() // 添加状态栏内边距
     ) {
         androidx.compose.foundation.rememberScrollState().let {
             Column(
