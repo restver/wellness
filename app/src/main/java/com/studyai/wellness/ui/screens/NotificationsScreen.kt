@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -32,10 +33,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.studyai.wellness.ui.components.AppBottomTabBar
 import com.studyai.wellness.ui.components.AppPrimaryButton
-import com.studyai.wellness.ui.theme.Background
-import com.studyai.wellness.ui.theme.PrimaryGreen
-import com.studyai.wellness.ui.theme.TextPrimary
-import com.studyai.wellness.ui.theme.TextSecondary
 import com.studyai.wellness.viewmodels.NotificationsViewModel
 import com.studyai.wellness.viewmodels.NotificationsUiState
 
@@ -91,7 +88,7 @@ private fun NotificationsContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Background)
+            .background(MaterialTheme.colorScheme.background)
     ) {
 
         Column(
@@ -108,7 +105,7 @@ private fun NotificationsContent(
             ) {
                 Text(
                     text = "Notifications",
-                    color = TextPrimary,
+                    color = MaterialTheme.colorScheme.onBackground,
                     fontSize = 32.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -176,7 +173,7 @@ private fun NotificationGroup(
         if (group.date.isNotEmpty()) {
             Text(
                 text = group.date,
-                color = TextSecondary,
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Medium
             )
@@ -205,7 +202,7 @@ private fun NotificationItem(
         modifier = Modifier
             .fillMaxWidth()
             .background(
-                if (notification.read) Color.White else PrimaryGreen.copy(alpha = 0.1f),
+                if (notification.read) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
                 RoundedCornerShape(16.dp)
             )
             .padding(16.dp)
@@ -246,18 +243,18 @@ private fun NotificationItem(
         ) {
             Text(
                 text = notification.title,
-                color = TextPrimary,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 15.sp,
                 fontWeight = if (notification.read) FontWeight.Normal else FontWeight.SemiBold
             )
             Text(
                 text = notification.message,
-                color = TextSecondary,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                 fontSize = 13.sp
             )
             Text(
                 text = notification.createdAt,
-                color = TextSecondary.copy(alpha = 0.7f),
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f),
                 fontSize = 11.sp
             )
         }
@@ -268,7 +265,7 @@ private fun NotificationItem(
                 modifier = Modifier
                     .size(8.dp)
                     .clip(CircleShape)
-                    .background(PrimaryGreen)
+                    .background(MaterialTheme.colorScheme.primary)
             )
         }
     }

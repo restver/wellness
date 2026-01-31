@@ -17,6 +17,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -29,10 +30,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.studyai.wellness.ui.components.AppBottomTabBar
-import com.studyai.wellness.ui.theme.Background
-import com.studyai.wellness.ui.theme.PrimaryGreen
-import com.studyai.wellness.ui.theme.TextPrimary
-import com.studyai.wellness.ui.theme.TextSecondary
 import com.studyai.wellness.viewmodels.StatsViewModel
 import com.studyai.wellness.viewmodels.StatsUiState
 
@@ -89,7 +86,7 @@ private fun StatsContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Background)
+            .background(MaterialTheme.colorScheme.background)
     ) {
 
         Column(
@@ -102,7 +99,7 @@ private fun StatsContent(
             // Header
             Text(
                 text = "Statistics",
-                color = TextPrimary,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -153,7 +150,7 @@ private fun StatsContent(
             // Charts Section
             Text(
                 text = "Weekly Activity",
-                color = TextPrimary,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.SemiBold
             )
@@ -163,7 +160,7 @@ private fun StatsContent(
             // Goals Progress
             Text(
                 text = "Goals Progress",
-                color = TextPrimary,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.SemiBold
             )
@@ -204,8 +201,8 @@ private fun PeriodButton(
         onClick = onClick,
         modifier = modifier.height(40.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = if (isSelected) PrimaryGreen else Color.White,
-            contentColor = if (isSelected) Color.White else TextSecondary
+            containerColor = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface,
+            contentColor = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
         ),
         shape = RoundedCornerShape(12.dp)
     ) {
@@ -225,18 +222,18 @@ private fun SummaryCard(
 ) {
     Column(
         modifier = modifier
-            .background(Color.White, RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(16.dp))
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Text(
             text = title,
-            color = TextSecondary,
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
             fontSize = 12.sp
         )
         Text(
             text = value,
-            color = TextPrimary,
+            color = MaterialTheme.colorScheme.onSurface,
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold
         )
@@ -248,7 +245,7 @@ private fun ActivityChart(weeklyStats: List<com.studyai.wellness.data.model.Week
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.White, RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(16.dp))
             .padding(20.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
@@ -271,13 +268,13 @@ private fun ActivityChart(weeklyStats: List<com.studyai.wellness.data.model.Week
                             .width(24.dp)
                             .height(barHeight)
                             .background(
-                                PrimaryGreen.copy(alpha = 0.8f),
+                                MaterialTheme.colorScheme.primary.copy(alpha = 0.8f),
                                 RoundedCornerShape(8.dp)
                             )
                     )
                     Text(
                         text = stat.label.take(3),
-                        color = TextSecondary,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                         fontSize = 11.sp
                     )
                 }
@@ -296,7 +293,7 @@ private fun GoalProgressItem(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.White, RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(16.dp))
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
@@ -306,13 +303,13 @@ private fun GoalProgressItem(
         ) {
             Text(
                 text = title,
-                color = TextPrimary,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Medium
             )
             Text(
                 text = "$progress/$target $unit",
-                color = TextSecondary,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                 fontSize = 13.sp
             )
         }
@@ -320,13 +317,13 @@ private fun GoalProgressItem(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(8.dp)
-                .background(Color(0xFFEDECEA), RoundedCornerShape(4.dp))
+                .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(4.dp))
         ) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth((progress.toFloat() / target).coerceIn(0f, 1f))
                     .height(8.dp)
-                    .background(PrimaryGreen, RoundedCornerShape(4.dp))
+                    .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(4.dp))
             )
         }
     }

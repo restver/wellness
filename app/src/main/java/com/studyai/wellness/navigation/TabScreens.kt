@@ -34,6 +34,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -50,10 +51,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.studyai.wellness.ui.components.AppMetricCard
-import com.studyai.wellness.ui.theme.Background
-import com.studyai.wellness.ui.theme.PrimaryGreen
-import com.studyai.wellness.ui.theme.TextPrimary
-import com.studyai.wellness.ui.theme.TextSecondary
 import com.studyai.wellness.viewmodels.CalendarViewModel
 import com.studyai.wellness.viewmodels.DashboardViewModel
 import com.studyai.wellness.viewmodels.DashboardUiState
@@ -107,7 +104,7 @@ private fun DashboardTabContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Background)
+            .background(MaterialTheme.colorScheme.background)
             .statusBarsPadding() // 添加状态栏内边距
     ) {
         LazyColumn(
@@ -125,13 +122,13 @@ private fun DashboardTabContent(
                     Column {
                         Text(
                             text = "Hello, ${dashboard.user.name}",
-                            color = TextPrimary,
+                            color = MaterialTheme.colorScheme.onBackground,
                             fontSize = 26.sp,
                             fontWeight = FontWeight.Bold
                         )
                         Text(
                             text = "Let's check your progress",
-                            color = TextSecondary,
+                            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
                             fontSize = 14.sp
                         )
                     }
@@ -139,12 +136,12 @@ private fun DashboardTabContent(
                         modifier = Modifier
                             .size(48.dp)
                             .clip(CircleShape)
-                            .background(PrimaryGreen),
+                            .background(MaterialTheme.colorScheme.primary),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
                             text = dashboard.user.name.first().toString(),
-                            color = Color.White,
+                            color = MaterialTheme.colorScheme.surface,
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold
                         )
@@ -156,7 +153,7 @@ private fun DashboardTabContent(
             item {
                 Text(
                     text = "Today's Progress",
-                    color = TextPrimary,
+                    color = MaterialTheme.colorScheme.onBackground,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.SemiBold
                 )
@@ -174,7 +171,7 @@ private fun DashboardTabContent(
             item {
                 Text(
                     text = "Daily Habits",
-                    color = TextPrimary,
+                    color = MaterialTheme.colorScheme.onBackground,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.SemiBold
                 )
@@ -188,7 +185,7 @@ private fun DashboardTabContent(
             item {
                 Text(
                     text = "This Week",
-                    color = TextPrimary,
+                    color = MaterialTheme.colorScheme.onBackground,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.SemiBold
                 )
@@ -203,7 +200,7 @@ private fun HabitItem(habit: com.studyai.wellness.data.model.HabitDto) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.White, RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(16.dp))
             .padding(16.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
@@ -219,13 +216,13 @@ private fun HabitItem(habit: com.studyai.wellness.data.model.HabitDto) {
             Column {
                 Text(
                     text = habit.name,
-                    color = TextPrimary,
+                    color = MaterialTheme.colorScheme.onBackground,
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Medium
                 )
                 Text(
                     text = "${habit.streak} day streak",
-                    color = TextSecondary,
+                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
                     fontSize = 12.sp
                 )
             }
@@ -233,7 +230,7 @@ private fun HabitItem(habit: com.studyai.wellness.data.model.HabitDto) {
         Icon(
             imageVector = if (habit.completed) Icons.Filled.CheckCircle else Icons.Outlined.Circle,
             contentDescription = null,
-            tint = if (habit.completed) PrimaryGreen else Color.Gray,
+            tint = if (habit.completed) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
             modifier = Modifier.size(24.dp)
         )
     }
@@ -245,7 +242,7 @@ private fun WeeklyProgressChart(days: List<com.studyai.wellness.data.model.DayPr
         modifier = Modifier
             .fillMaxWidth()
             .height(80.dp)
-            .background(Color.White, RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(16.dp))
             .padding(16.dp),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.Bottom
@@ -260,13 +257,13 @@ private fun WeeklyProgressChart(days: List<com.studyai.wellness.data.model.DayPr
                         .width(32.dp)
                         .height((day.value * 60).dp)
                         .background(
-                            if (day.completed) PrimaryGreen else Color(0xFFEDECEA),
+                            if (day.completed) MaterialTheme.colorScheme.primary else Color(0xFFEDECEA),
                             RoundedCornerShape(8.dp)
                         )
                 )
                 Text(
                     text = day.day.take(1),
-                    color = TextSecondary,
+                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
                     fontSize = 12.sp
                 )
             }
@@ -296,7 +293,7 @@ fun DashboardDetailScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Background)
+                .background(MaterialTheme.colorScheme.background)
                 .padding(padding)
                 .padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -304,13 +301,13 @@ fun DashboardDetailScreen(
         ) {
             Text(
                 text = "This is a detail page within Dashboard Tab",
-                color = TextPrimary,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 18.sp
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
                 text = "Bottom TabBar is still visible!",
-                color = PrimaryGreen,
+                color = MaterialTheme.colorScheme.primary,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -331,7 +328,7 @@ fun CalendarTabHomeScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Background)
+            .background(MaterialTheme.colorScheme.background)
             .statusBarsPadding() // 添加状态栏内边距，避免内容被遮挡
     ) {
         Column(
@@ -343,7 +340,7 @@ fun CalendarTabHomeScreen(
             // Header
             Text(
                 text = "Calendar",
-                color = TextPrimary,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -361,18 +358,18 @@ fun CalendarTabHomeScreen(
                     modifier = Modifier
                         .size(40.dp)
                         .clip(CircleShape)
-                        .background(Color.White)
+                        .background(MaterialTheme.colorScheme.surface)
                 ) {
                     Icon(
                         imageVector = Icons.Filled.ArrowBack,
                         contentDescription = "Previous Month",
-                        tint = PrimaryGreen
+                        tint = MaterialTheme.colorScheme.primary
                     )
                 }
 
                 Text(
                     text = "${currentMonth.month.getDisplayName(java.time.format.TextStyle.FULL, java.util.Locale.getDefault())} ${currentMonth.year}",
-                    color = TextPrimary,
+                    color = MaterialTheme.colorScheme.onBackground,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -382,12 +379,12 @@ fun CalendarTabHomeScreen(
                     modifier = Modifier
                         .size(40.dp)
                         .clip(CircleShape)
-                        .background(Color.White)
+                        .background(MaterialTheme.colorScheme.surface)
                 ) {
                     Icon(
                         imageVector = Icons.Filled.ArrowForward,
                         contentDescription = "Next Month",
-                        tint = PrimaryGreen
+                        tint = MaterialTheme.colorScheme.primary
                     )
                 }
             }
@@ -405,24 +402,24 @@ fun CalendarTabHomeScreen(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Color.White, RoundedCornerShape(16.dp))
+                    .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(16.dp))
                     .padding(20.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
                     text = "Selected Date",
-                    color = TextSecondary,
+                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
                     fontSize = 13.sp
                 )
                 Text(
                     text = "${selectedDate.month.getDisplayName(java.time.format.TextStyle.FULL, java.util.Locale.getDefault())} ${selectedDate.dayOfMonth}, ${selectedDate.year}",
-                    color = TextPrimary,
+                    color = MaterialTheme.colorScheme.onBackground,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
                     text = "No activities scheduled",
-                    color = TextSecondary,
+                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
                     fontSize = 14.sp
                 )
             }
@@ -443,7 +440,7 @@ private fun CalendarGrid(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.White, RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(16.dp))
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
@@ -455,7 +452,7 @@ private fun CalendarGrid(
             dayNames.forEach { day ->
                 Text(
                     text = day,
-                    color = TextSecondary,
+                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Medium,
                     modifier = Modifier.weight(1f),
@@ -507,8 +504,8 @@ private fun DayCell(
             .clip(CircleShape)
             .background(
                 when {
-                    isSelected -> PrimaryGreen
-                    isToday -> PrimaryGreen.copy(alpha = 0.2f)
+                    isSelected -> MaterialTheme.colorScheme.primary
+                    isToday -> MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
                     else -> Color.Transparent
                 }
             )
@@ -517,7 +514,7 @@ private fun DayCell(
     ) {
         Text(
             text = day.toString(),
-            color = if (isSelected) Color.White else TextPrimary,
+            color = if (isSelected) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.onBackground,
             fontSize = 14.sp,
             fontWeight = if (isSelected || isToday) FontWeight.Bold else FontWeight.Normal
         )
@@ -545,13 +542,13 @@ fun CalendarEventDetailScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Background)
+                .background(MaterialTheme.colorScheme.background)
                 .padding(padding)
                 .padding(24.dp)
         ) {
             Text(
                 text = "Calendar Event Detail",
-                color = TextPrimary,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -604,7 +601,7 @@ private fun StatsTabContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Background)
+            .background(MaterialTheme.colorScheme.background)
             .statusBarsPadding() // 添加状态栏内边距
     ) {
         androidx.compose.foundation.rememberScrollState().let {
@@ -617,7 +614,7 @@ private fun StatsTabContent(
                 item {
                     Text(
                         text = "Statistics",
-                        color = TextPrimary,
+                        color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 32.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -668,18 +665,18 @@ private fun StatsTabContent(
                             Column(
                                 modifier = Modifier
                                     .weight(1f)
-                                    .background(Color.White, RoundedCornerShape(16.dp))
+                                    .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(16.dp))
                                     .padding(16.dp),
                                 verticalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
                                 Text(
                                     text = it.title,
-                                    color = TextSecondary,
+                                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
                                     fontSize = 12.sp
                                 )
                                 Text(
                                     text = it.value,
-                                    color = TextPrimary,
+                                    color = MaterialTheme.colorScheme.onBackground,
                                     fontSize = 20.sp,
                                     fontWeight = FontWeight.Bold
                                 )
@@ -692,7 +689,7 @@ private fun StatsTabContent(
                 item {
                     Text(
                         text = "Weekly Activity",
-                        color = TextPrimary,
+                        color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.SemiBold
                     )
@@ -706,7 +703,7 @@ private fun StatsTabContent(
                 item {
                     Text(
                         text = "Goals Progress",
-                        color = TextPrimary,
+                        color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.SemiBold
                     )
@@ -736,8 +733,8 @@ private fun PeriodButton(
         onClick = onClick,
         modifier = modifier.height(40.dp),
         colors = androidx.compose.material3.ButtonDefaults.buttonColors(
-            containerColor = if (isSelected) PrimaryGreen else Color.White,
-            contentColor = if (isSelected) Color.White else TextSecondary
+            containerColor = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface,
+            contentColor = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
         ),
         shape = RoundedCornerShape(12.dp)
     ) {
@@ -757,18 +754,18 @@ private fun SummaryCard(
 ) {
     Column(
         modifier = modifier
-            .background(Color.White, RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(16.dp))
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Text(
             text = title,
-            color = TextSecondary,
+            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
             fontSize = 12.sp
         )
         Text(
             text = value,
-            color = TextPrimary,
+            color = MaterialTheme.colorScheme.onBackground,
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold
         )
@@ -780,7 +777,7 @@ private fun ActivityChart(weeklyStats: List<com.studyai.wellness.data.model.Week
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.White, RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(16.dp))
             .padding(20.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
@@ -803,13 +800,13 @@ private fun ActivityChart(weeklyStats: List<com.studyai.wellness.data.model.Week
                             .width(24.dp)
                             .height(barHeight)
                             .background(
-                                PrimaryGreen.copy(alpha = 0.8f),
+                                MaterialTheme.colorScheme.primary.copy(alpha = 0.8f),
                                 RoundedCornerShape(8.dp)
                             )
                     )
                     Text(
                         text = stat.label.take(3),
-                        color = TextSecondary,
+                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
                         fontSize = 11.sp
                     )
                 }
@@ -828,7 +825,7 @@ private fun GoalProgressItem(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.White, RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(16.dp))
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
@@ -838,13 +835,13 @@ private fun GoalProgressItem(
         ) {
             Text(
                 text = title,
-                color = TextPrimary,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Medium
             )
             Text(
                 text = "$progress/$target $unit",
-                color = TextSecondary,
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
                 fontSize = 13.sp
             )
         }
@@ -852,13 +849,13 @@ private fun GoalProgressItem(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(8.dp)
-                .background(Color(0xFFEDECEA), RoundedCornerShape(4.dp))
+                .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(4.dp))
         ) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth((progress.toFloat() / target).coerceIn(0f, 1f))
                     .height(8.dp)
-                    .background(PrimaryGreen, RoundedCornerShape(4.dp))
+                    .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(4.dp))
             )
         }
     }
@@ -884,13 +881,13 @@ fun StatsDetailsScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Background)
+                .background(MaterialTheme.colorScheme.background)
                 .padding(padding)
                 .padding(24.dp)
         ) {
             Text(
                 text = "Detailed Statistics Page",
-                color = TextPrimary,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -941,7 +938,7 @@ private fun ProfileTabContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Background)
+            .background(MaterialTheme.colorScheme.background)
             .statusBarsPadding() // 添加状态栏内边距
     ) {
         Spacer(modifier = Modifier.height(16.dp))
@@ -954,7 +951,7 @@ private fun ProfileTabContent(
             item {
                 Text(
                     text = "My Profile",
-                    color = TextPrimary,
+                    color = MaterialTheme.colorScheme.onBackground,
                     fontSize = 32.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -966,7 +963,7 @@ private fun ProfileTabContent(
                         .fillMaxWidth()
                         .clickable { onEditProfile() },
                     shape = RoundedCornerShape(20.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White)
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
                 ) {
                     Column(
                         modifier = Modifier.padding(24.dp),
@@ -974,19 +971,19 @@ private fun ProfileTabContent(
                     ) {
                         Text(
                             text = user.name,
-                            color = TextPrimary,
+                            color = MaterialTheme.colorScheme.onBackground,
                             fontSize = 24.sp,
                             fontWeight = FontWeight.Bold
                         )
                         Text(
                             text = user.email,
-                            color = TextSecondary,
+                            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
                             fontSize = 14.sp
                         )
                         Spacer(modifier = Modifier.height(12.dp))
                         Text(
                             text = "Tap to edit profile",
-                            color = PrimaryGreen,
+                            color = MaterialTheme.colorScheme.primary,
                             fontSize = 13.sp
                         )
                     }
@@ -1023,13 +1020,13 @@ fun ProfileEditScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Background)
+                .background(MaterialTheme.colorScheme.background)
                 .padding(padding)
                 .padding(24.dp)
         ) {
             Text(
                 text = "Edit Profile Page",
-                color = TextPrimary,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -1051,7 +1048,7 @@ fun SettingsTabHomeScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Background)
+            .background(MaterialTheme.colorScheme.background)
             .statusBarsPadding() // 添加状态栏内边距
     ) {
         androidx.compose.foundation.rememberScrollState().let {
@@ -1065,7 +1062,7 @@ fun SettingsTabHomeScreen(
                 // Header
                 Text(
                     text = "Settings",
-                    color = TextPrimary,
+                    color = MaterialTheme.colorScheme.onBackground,
                     fontSize = 32.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -1075,7 +1072,7 @@ fun SettingsTabHomeScreen(
                 // Notifications Section
                 Text(
                     text = "Notifications",
-                    color = TextSecondary,
+                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Medium
                 )
@@ -1092,7 +1089,7 @@ fun SettingsTabHomeScreen(
                 // Appearance Section
                 Text(
                     text = "Appearance",
-                    color = TextSecondary,
+                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Medium
                 )
@@ -1109,7 +1106,7 @@ fun SettingsTabHomeScreen(
                 // Language Section
                 Text(
                     text = "Language",
-                    color = TextSecondary,
+                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Medium
                 )
@@ -1133,7 +1130,7 @@ private fun SettingItem(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.White, RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(16.dp))
             .padding(16.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
@@ -1141,13 +1138,13 @@ private fun SettingItem(
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = title,
-                color = TextPrimary,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Medium
             )
             Text(
                 text = description,
-                color = TextSecondary,
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
                 fontSize = 13.sp
             )
         }
@@ -1155,8 +1152,8 @@ private fun SettingItem(
             checked = enabled,
             onCheckedChange = onToggle,
             colors = SwitchDefaults.colors(
-                checkedThumbColor = PrimaryGreen,
-                checkedTrackColor = PrimaryGreen.copy(alpha = 0.5f),
+                checkedThumbColor = MaterialTheme.colorScheme.primary,
+                checkedTrackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
                 uncheckedThumbColor = Color.Gray,
                 uncheckedTrackColor = Color.Gray.copy(alpha = 0.5f)
             )
@@ -1180,13 +1177,13 @@ private fun LanguageItem(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.White, RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(16.dp))
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         Text(
             text = "App Language",
-            color = TextPrimary,
+            color = MaterialTheme.colorScheme.onBackground,
             fontSize = 16.sp,
             fontWeight = FontWeight.Medium
         )
@@ -1210,7 +1207,7 @@ private fun LanguageOption(
         modifier = Modifier
             .fillMaxWidth()
             .background(
-                if (selected) PrimaryGreen.copy(alpha = 0.1f) else Color.Transparent,
+                if (selected) MaterialTheme.colorScheme.primary.copy(alpha = 0.1f) else Color.Transparent,
                 RoundedCornerShape(8.dp)
             )
             .padding(12.dp),
@@ -1219,7 +1216,7 @@ private fun LanguageOption(
     ) {
         Text(
             text = name,
-            color = if (selected) PrimaryGreen else TextPrimary,
+            color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground,
             fontSize = 14.sp,
             fontWeight = if (selected) FontWeight.Medium else FontWeight.Normal
         )
@@ -1227,7 +1224,7 @@ private fun LanguageOption(
             Icon(
                 imageVector = Icons.Filled.Check,
                 contentDescription = null,
-                tint = PrimaryGreen
+                tint = MaterialTheme.colorScheme.primary
             )
         }
     }
@@ -1253,13 +1250,13 @@ fun AboutScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Background)
+                .background(MaterialTheme.colorScheme.background)
                 .padding(padding)
                 .padding(24.dp)
         ) {
             Text(
                 text = "About App",
-                color = TextPrimary,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
             )

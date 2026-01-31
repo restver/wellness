@@ -26,10 +26,6 @@ import com.studyai.wellness.ui.components.AppInputField
 import com.studyai.wellness.ui.components.AppPasswordField
 import com.studyai.wellness.ui.components.AppPrimaryButton
 import com.studyai.wellness.ui.components.AppTextButton
-import com.studyai.wellness.ui.theme.Background
-import com.studyai.wellness.ui.theme.PrimaryGreen
-import com.studyai.wellness.ui.theme.TextPrimary
-import com.studyai.wellness.ui.theme.TextSecondary
 import com.studyai.wellness.viewmodels.LoginViewModel
 import com.studyai.wellness.viewmodels.LoginUiState
 
@@ -53,7 +49,7 @@ fun LoginScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Background)
+            .background(androidx.compose.material3.MaterialTheme.colorScheme.background)
             .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -71,13 +67,13 @@ fun LoginScreen(
             )
             Text(
                 text = "Welcome Back",
-                color = TextPrimary,
+                color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Bold
             )
             Text(
                 text = "Sign in to continue your wellness journey",
-                color = TextSecondary,
+                color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
                 fontSize = 15.sp
             )
         }
@@ -134,7 +130,7 @@ fun LoginScreen(
         ) {
             Text(
                 text = "Don't have an account? ",
-                color = TextSecondary,
+                color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
                 fontSize = 15.sp
             )
             AppTextButton(

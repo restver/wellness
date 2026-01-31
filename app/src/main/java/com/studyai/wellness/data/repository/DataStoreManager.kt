@@ -3,6 +3,7 @@ package com.studyai.wellness.data.repository
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
@@ -23,6 +24,7 @@ class DataStoreManager @Inject constructor(
         val TOKEN = stringPreferencesKey("token")
         val REFRESH_TOKEN = stringPreferencesKey("refresh_token")
         val USER_ID = stringPreferencesKey("user_id")
+        val DARK_MODE = booleanPreferencesKey("dark_mode")
     }
 
     val token: Flow<String?> = context.dataStore.data.map { preferences ->
@@ -55,5 +57,15 @@ class DataStoreManager @Inject constructor(
 
     suspend fun getToken(): String? {
         return context.dataStore.data.first()[PreferencesKeys.TOKEN]
+    }
+
+    val darkMode: Flow<Boolean> = context.dataStore.data.map { preferences ->
+        preferences[PreferencesKeys.DARK_MODE] ?: false
+    }
+
+    suspend fun saveDarkMode(enabled: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.DARK_MODE] = enabled
+        }
     }
 }

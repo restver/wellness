@@ -21,6 +21,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -35,10 +36,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.studyai.wellness.ui.components.AppBottomTabBar
-import com.studyai.wellness.ui.theme.Background
-import com.studyai.wellness.ui.theme.PrimaryGreen
-import com.studyai.wellness.ui.theme.TextPrimary
-import com.studyai.wellness.ui.theme.TextSecondary
 import com.studyai.wellness.viewmodels.CalendarViewModel
 import java.time.LocalDate
 import java.time.YearMonth
@@ -60,7 +57,7 @@ fun CalendarScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Background)
+            .background(MaterialTheme.colorScheme.background)
     ) {
 
         Column(
@@ -72,7 +69,7 @@ fun CalendarScreen(
             // Header
             Text(
                 text = "Calendar",
-                color = TextPrimary,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -90,18 +87,18 @@ fun CalendarScreen(
                     modifier = Modifier
                         .size(40.dp)
                         .clip(CircleShape)
-                        .background(Color.White)
+                        .background(MaterialTheme.colorScheme.surface)
                 ) {
                     Icon(
                         imageVector = Icons.Default.ArrowBack,
                         contentDescription = "Previous Month",
-                        tint = PrimaryGreen
+                        tint = MaterialTheme.colorScheme.primary
                     )
                 }
 
                 Text(
                     text = "${currentMonth.month.getDisplayName(TextStyle.FULL, Locale.getDefault())} ${currentMonth.year}",
-                    color = TextPrimary,
+                    color = MaterialTheme.colorScheme.onBackground,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -111,12 +108,12 @@ fun CalendarScreen(
                     modifier = Modifier
                         .size(40.dp)
                         .clip(CircleShape)
-                        .background(Color.White)
+                        .background(MaterialTheme.colorScheme.surface)
                 ) {
                     Icon(
                         imageVector = Icons.Default.ArrowForward,
                         contentDescription = "Next Month",
-                        tint = PrimaryGreen
+                        tint = MaterialTheme.colorScheme.primary
                     )
                 }
             }
@@ -134,24 +131,24 @@ fun CalendarScreen(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Color.White, RoundedCornerShape(16.dp))
+                    .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(16.dp))
                     .padding(20.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
                     text = "Selected Date",
-                    color = TextSecondary,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                     fontSize = 13.sp
                 )
                 Text(
                     text = "${selectedDate.month.getDisplayName(TextStyle.FULL, Locale.getDefault())} ${selectedDate.dayOfMonth}, ${selectedDate.year}",
-                    color = TextPrimary,
+                    color = MaterialTheme.colorScheme.onSurface,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
                     text = "No activities scheduled",
-                    color = TextSecondary,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                     fontSize = 14.sp
                 )
             }
@@ -185,7 +182,7 @@ private fun CalendarGrid(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.White, RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(16.dp))
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
@@ -197,7 +194,7 @@ private fun CalendarGrid(
             dayNames.forEach { day ->
                 Text(
                     text = day,
-                    color = TextSecondary,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Medium,
                     modifier = Modifier.weight(1f),
@@ -249,8 +246,8 @@ private fun DayCell(
             .clip(CircleShape)
             .background(
                 when {
-                    isSelected -> PrimaryGreen
-                    isToday -> PrimaryGreen.copy(alpha = 0.2f)
+                    isSelected -> MaterialTheme.colorScheme.primary
+                    isToday -> MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
                     else -> Color.Transparent
                 }
             )
@@ -259,7 +256,7 @@ private fun DayCell(
     ) {
         Text(
             text = day.toString(),
-            color = if (isSelected) Color.White else TextPrimary,
+            color = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
             fontSize = 14.sp,
             fontWeight = if (isSelected || isToday) FontWeight.Bold else FontWeight.Normal
         )

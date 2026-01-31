@@ -17,6 +17,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -29,10 +30,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.studyai.wellness.ui.components.AppBottomTabBar
-import com.studyai.wellness.ui.theme.Background
-import com.studyai.wellness.ui.theme.PrimaryGreen
-import com.studyai.wellness.ui.theme.TextPrimary
-import com.studyai.wellness.ui.theme.TextSecondary
 import com.studyai.wellness.viewmodels.SettingsViewModel
 
 @Composable
@@ -51,7 +48,7 @@ fun SettingsScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Background)
+            .background(MaterialTheme.colorScheme.background)
     ) {
 
         Column(
@@ -64,7 +61,7 @@ fun SettingsScreen(
             // Header
             Text(
                 text = "Settings",
-                color = TextPrimary,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -74,7 +71,7 @@ fun SettingsScreen(
             // Notifications Section
             Text(
                 text = "Notifications",
-                color = TextSecondary,
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium
             )
@@ -91,7 +88,7 @@ fun SettingsScreen(
             // Appearance Section
             Text(
                 text = "Appearance",
-                color = TextSecondary,
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium
             )
@@ -108,7 +105,7 @@ fun SettingsScreen(
             // Language Section
             Text(
                 text = "Language",
-                color = TextSecondary,
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium
             )
@@ -144,7 +141,7 @@ private fun SettingItem(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.White, RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(16.dp))
             .padding(16.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
@@ -152,13 +149,13 @@ private fun SettingItem(
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = title,
-                color = TextPrimary,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Medium
             )
             Text(
                 text = description,
-                color = TextSecondary,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                 fontSize = 13.sp
             )
         }
@@ -166,10 +163,10 @@ private fun SettingItem(
             checked = enabled,
             onCheckedChange = onToggle,
             colors = SwitchDefaults.colors(
-                checkedThumbColor = PrimaryGreen,
-                checkedTrackColor = PrimaryGreen.copy(alpha = 0.5f),
-                uncheckedThumbColor = Color.Gray,
-                uncheckedTrackColor = Color.Gray.copy(alpha = 0.5f)
+                checkedThumbColor = MaterialTheme.colorScheme.primary,
+                checkedTrackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
+                uncheckedThumbColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
+                uncheckedTrackColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)
             )
         )
     }
@@ -191,13 +188,13 @@ private fun LanguageItem(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.White, RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(16.dp))
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         Text(
             text = "App Language",
-            color = TextPrimary,
+            color = MaterialTheme.colorScheme.onSurface,
             fontSize = 16.sp,
             fontWeight = FontWeight.Medium
         )
@@ -221,7 +218,7 @@ private fun LanguageOption(
         modifier = Modifier
             .fillMaxWidth()
             .background(
-                if (selected) PrimaryGreen.copy(alpha = 0.1f) else Color.Transparent,
+                if (selected) MaterialTheme.colorScheme.primary.copy(alpha = 0.1f) else Color.Transparent,
                 RoundedCornerShape(8.dp)
             )
             .padding(12.dp),
@@ -230,7 +227,7 @@ private fun LanguageOption(
     ) {
         Text(
             text = name,
-            color = if (selected) PrimaryGreen else TextPrimary,
+            color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
             fontSize = 14.sp,
             fontWeight = if (selected) FontWeight.Medium else FontWeight.Normal
         )
@@ -238,7 +235,7 @@ private fun LanguageOption(
             Icon(
                 imageVector = androidx.compose.material.icons.Icons.Default.Check,
                 contentDescription = null,
-                tint = PrimaryGreen
+                tint = MaterialTheme.colorScheme.primary
             )
         }
     }

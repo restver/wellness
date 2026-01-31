@@ -19,6 +19,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.outlined.Circle
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -34,10 +35,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.studyai.wellness.ui.components.AppBottomTabBar
 import com.studyai.wellness.ui.components.AppMetricCard
 import com.studyai.wellness.ui.components.FullScreenLoading
-import com.studyai.wellness.ui.theme.Background
-import com.studyai.wellness.ui.theme.PrimaryGreen
-import com.studyai.wellness.ui.theme.TextPrimary
-import com.studyai.wellness.ui.theme.TextSecondary
 import com.studyai.wellness.viewmodels.DashboardViewModel
 import com.studyai.wellness.viewmodels.DashboardUiState
 
@@ -92,7 +89,7 @@ private fun DashboardContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Background)
+            .background(MaterialTheme.colorScheme.background)
     ) {
 
         LazyColumn(
@@ -110,13 +107,13 @@ private fun DashboardContent(
                     Column {
                         Text(
                             text = "Hello, ${dashboard.user.name}",
-                            color = TextPrimary,
+                            color = MaterialTheme.colorScheme.onBackground,
                             fontSize = 26.sp,
                             fontWeight = FontWeight.Bold
                         )
                         Text(
                             text = "Let's check your progress",
-                            color = TextSecondary,
+                            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
                             fontSize = 14.sp
                         )
                     }
@@ -124,12 +121,12 @@ private fun DashboardContent(
                         modifier = Modifier
                             .size(48.dp)
                             .clip(CircleShape)
-                            .background(PrimaryGreen),
+                            .background(MaterialTheme.colorScheme.primary),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
                             text = dashboard.user.name.first().toString(),
-                            color = Color.White,
+                            color = MaterialTheme.colorScheme.onPrimary,
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold
                         )
@@ -141,7 +138,7 @@ private fun DashboardContent(
             item {
                 Text(
                     text = "Today's Progress",
-                    color = TextPrimary,
+                    color = MaterialTheme.colorScheme.onBackground,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.SemiBold
                 )
@@ -159,7 +156,7 @@ private fun DashboardContent(
             item {
                 Text(
                     text = "Daily Habits",
-                    color = TextPrimary,
+                    color = MaterialTheme.colorScheme.onBackground,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.SemiBold
                 )
@@ -173,7 +170,7 @@ private fun DashboardContent(
             item {
                 Text(
                     text = "This Week",
-                    color = TextPrimary,
+                    color = MaterialTheme.colorScheme.onBackground,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.SemiBold
                 )
@@ -201,7 +198,7 @@ private fun HabitItem(habit: com.studyai.wellness.data.model.HabitDto) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.White, androidx.compose.foundation.shape.RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.surface, androidx.compose.foundation.shape.RoundedCornerShape(16.dp))
             .padding(16.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
@@ -217,13 +214,13 @@ private fun HabitItem(habit: com.studyai.wellness.data.model.HabitDto) {
             Column {
                 Text(
                     text = habit.name,
-                    color = TextPrimary,
+                    color = MaterialTheme.colorScheme.onSurface,
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Medium
                 )
                 Text(
                     text = "${habit.streak} day streak",
-                    color = TextSecondary,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                     fontSize = 12.sp
                 )
             }
@@ -231,7 +228,7 @@ private fun HabitItem(habit: com.studyai.wellness.data.model.HabitDto) {
         Icon(
             imageVector = if (habit.completed) Icons.Filled.CheckCircle else Icons.Outlined.Circle,
             contentDescription = null,
-            tint = if (habit.completed) PrimaryGreen else Color.Gray,
+            tint = if (habit.completed) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
             modifier = Modifier.size(24.dp)
         )
     }
@@ -243,7 +240,7 @@ private fun WeeklyProgressChart(days: List<com.studyai.wellness.data.model.DayPr
         modifier = Modifier
             .fillMaxWidth()
             .height(80.dp)
-            .background(Color.White, androidx.compose.foundation.shape.RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.surface, androidx.compose.foundation.shape.RoundedCornerShape(16.dp))
             .padding(16.dp),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.Bottom
@@ -258,13 +255,13 @@ private fun WeeklyProgressChart(days: List<com.studyai.wellness.data.model.DayPr
                         .width(32.dp)
                         .height((day.value * 60).dp)
                         .background(
-                            if (day.completed) PrimaryGreen else Color(0xFFEDECEA),
+                            if (day.completed) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
                             androidx.compose.foundation.shape.RoundedCornerShape(8.dp)
                         )
                 )
                 Text(
                     text = day.day.take(1),
-                    color = TextSecondary,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                     fontSize = 12.sp
                 )
             }

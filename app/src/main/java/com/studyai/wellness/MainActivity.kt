@@ -12,12 +12,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.studyai.wellness.data.repository.DataStoreManager
 import com.studyai.wellness.data.repository.UserRepository
 import com.studyai.wellness.navigation.AppNavigation
 import com.studyai.wellness.navigation.AuthScreen
@@ -32,13 +35,18 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var userRepository: UserRepository
 
+    @Inject
+    lateinit var dataStoreManager: DataStoreManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // 让内容延伸到系统栏下方
         WindowCompat.setDecorFitsSystemWindows(window, false)
         enableEdgeToEdge()
         setContent {
-            WellnessApp {
+            WellnessApp(
+                dataStoreManager = dataStoreManager
+            ) {
                 AppRoot(userRepository = userRepository)
             }
         }
@@ -57,8 +65,15 @@ fun AppRoot(userRepository: UserRepository) {
 }
 
 @Composable
-fun WellnessApp(content: @Composable () -> Unit) {
-    WellnessAppTheme {
+fun WellnessApp(
+    dataStoreManager: DataStoreManager,
+    content: @Composable () -> Unit
+) {
+    val darkMode by dataStoreManager.darkMode.collectAsState(initial = false)
+
+    WellnessAppTheme(
+        darkTheme = darkMode
+    ) {
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background

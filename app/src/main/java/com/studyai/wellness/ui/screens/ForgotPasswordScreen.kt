@@ -27,10 +27,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.studyai.wellness.ui.components.AppInputField
 import com.studyai.wellness.ui.components.AppPrimaryButton
-import com.studyai.wellness.ui.theme.Background
-import com.studyai.wellness.ui.theme.PrimaryGreen
-import com.studyai.wellness.ui.theme.TextPrimary
-import com.studyai.wellness.ui.theme.TextSecondary
 import com.studyai.wellness.viewmodels.ForgotPasswordViewModel
 import com.studyai.wellness.viewmodels.ForgotPasswordUiState
 
@@ -51,7 +47,7 @@ fun ForgotPasswordScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Background)
+            .background(androidx.compose.material3.MaterialTheme.colorScheme.background)
     ) {
         // Header with back button
         Row(
@@ -67,7 +63,7 @@ fun ForgotPasswordScreen(
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "Back",
-                    tint = TextPrimary
+                    tint = androidx.compose.material3.MaterialTheme.colorScheme.onBackground
                 )
             }
         }
@@ -87,13 +83,13 @@ fun ForgotPasswordScreen(
             )
             Text(
                 text = "Forgot Password?",
-                color = TextPrimary,
+                color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold
             )
             Text(
                 text = "No worries! Enter your email and we'll send you a reset link.",
-                color = TextSecondary,
+                color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
                 fontSize = 15.sp
             )
         }
@@ -127,7 +123,7 @@ fun ForgotPasswordScreen(
             if (uiState is ForgotPasswordUiState.Success) {
                 Text(
                     text = "Reset link sent! Check your email.",
-                    color = PrimaryGreen,
+                    color = androidx.compose.material3.MaterialTheme.colorScheme.primary,
                     fontSize = 14.sp,
                     modifier = Modifier.padding(top = 8.dp)
                 )

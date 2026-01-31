@@ -13,14 +13,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.studyai.wellness.ui.theme.PrimaryGreen
-import com.studyai.wellness.ui.theme.TextPrimary
-import com.studyai.wellness.ui.theme.TextSecondary
 
 @Composable
 fun AppCard(
     modifier: Modifier = Modifier,
-    backgroundColor: Color = Color.White,
+    backgroundColor: Color? = null,
     elevation: Int = 0,
     content: @Composable ColumnScope.() -> Unit
 ) {
@@ -28,7 +25,7 @@ fun AppCard(
         modifier = modifier
             .fillMaxWidth()
             .background(
-                color = backgroundColor,
+                color = backgroundColor ?: MaterialTheme.colorScheme.surface,
                 shape = RoundedCornerShape(16.dp)
             )
             .padding(20.dp),
@@ -42,7 +39,7 @@ fun AppMetricCard(
     value: String,
     subtitle: String? = null,
     modifier: Modifier = Modifier,
-    backgroundColor: Color = Color.White
+    backgroundColor: Color? = null
 ) {
     AppCard(
         modifier = modifier,
@@ -50,12 +47,12 @@ fun AppMetricCard(
     ) {
         Text(
             text = title,
-            color = TextSecondary,
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
             fontSize = 13.sp
         )
         Text(
             text = value,
-            color = TextPrimary,
+            color = MaterialTheme.colorScheme.onSurface,
             fontSize = 32.sp,
             fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
             modifier = Modifier.padding(vertical = 4.dp)
@@ -63,7 +60,7 @@ fun AppMetricCard(
         subtitle?.let {
             Text(
                 text = it,
-                color = PrimaryGreen,
+                color = MaterialTheme.colorScheme.primary,
                 fontSize = 12.sp
             )
         }

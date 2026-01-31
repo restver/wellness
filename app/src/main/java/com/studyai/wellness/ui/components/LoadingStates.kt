@@ -14,8 +14,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.studyai.wellness.ui.theme.PrimaryGreen
-import com.studyai.wellness.ui.theme.TextSecondary
 
 @Composable
 fun FullScreenLoading(modifier: Modifier = Modifier) {
@@ -25,7 +23,7 @@ fun FullScreenLoading(modifier: Modifier = Modifier) {
     ) {
         CircularProgressIndicator(
             modifier = Modifier.size(48.dp),
-            color = PrimaryGreen
+            color = MaterialTheme.colorScheme.primary
         )
     }
 }
@@ -38,7 +36,7 @@ fun InlineLoading(modifier: Modifier = Modifier) {
     ) {
         CircularProgressIndicator(
             modifier = Modifier.size(24.dp),
-            color = PrimaryGreen,
+            color = MaterialTheme.colorScheme.primary,
             strokeWidth = 2.dp
         )
     }
@@ -87,7 +85,7 @@ fun EmptyState(
         )
         Text(
             text = message,
-            color = TextSecondary,
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
             style = MaterialTheme.typography.bodyLarge
         )
         actionLabel?.let { label ->
