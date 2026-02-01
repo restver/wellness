@@ -3,7 +3,6 @@ import SwiftUI
 // MARK: - Dashboard View
 struct DashboardView: View {
     @State private var viewModel: DashboardViewModel?
-    @State private var selectedTab: AppTab = .dashboard
 
     var body: some View {
         ZStack {
@@ -15,63 +14,59 @@ struct DashboardView: View {
                         viewModel.loadDashboard()
                     }
                 } else if let dashboard = viewModel.dashboard {
-                    VStack(spacing: 0) {
-                        ScrollView {
-                            VStack(spacing: 20) {
-                                // Header
-                                headerSection(user: dashboard.user)
+                    ScrollView {
+                        VStack(spacing: 20) {
+                            // Header
+                            headerSection(user: dashboard.user)
 
-                                // Metrics
-                                VStack(alignment: .leading, spacing: 12) {
-                                    Text("Today's Progress")
-                                        .font(.appHeadline)
-                                        .foregroundColor(AppTheme.shared.colorScheme.textPrimary)
-                                        .padding(.horizontal, 24)
+                            // Metrics
+                            VStack(alignment: .leading, spacing: 12) {
+                                Text("Today's Progress")
+                                    .font(.appHeadline)
+                                    .foregroundColor(AppTheme.shared.colorScheme.textPrimary)
+                                    .padding(.horizontal, 24)
 
-                                    ForEach(dashboard.metrics.prefix(3)) { metric in
-                                        MetricCard(
-                                            title: metric.title,
-                                            value: metric.value,
-                                            subtitle: metric.subtitle,
-                                            trend: metric.trend,
-                                            color: metric.color
-                                        )
-                                        .padding(.horizontal, 24)
-                                    }
+                                ForEach(dashboard.metrics.prefix(3)) { metric in
+                                    MetricCard(
+                                        title: metric.title,
+                                        value: metric.value,
+                                        subtitle: metric.subtitle,
+                                        trend: metric.trend,
+                                        color: metric.color
+                                    )
+                                    .padding(.horizontal, 24)
                                 }
-
-                                // Habits
-                                VStack(alignment: .leading, spacing: 12) {
-                                    Text("Daily Habits")
-                                        .font(.appHeadline)
-                                        .foregroundColor(AppTheme.shared.colorScheme.textPrimary)
-                                        .padding(.horizontal, 24)
-
-                                    ForEach(dashboard.habits) { habit in
-                                        HabitCard(habit: habit) {
-                                            viewModel.toggleHabit(habit)
-                                        }
-                                        .padding(.horizontal, 24)
-                                    }
-                                }
-
-                                // Weekly Progress
-                                VStack(alignment: .leading, spacing: 12) {
-                                    Text("This Week")
-                                        .font(.appHeadline)
-                                        .foregroundColor(AppTheme.shared.colorScheme.textPrimary)
-                                        .padding(.horizontal, 24)
-
-                                    WeeklyProgressChart(days: dashboard.weeklyProgress.days)
-                                        .padding(.horizontal, 24)
-                                }
-
-                                Spacer().frame(height: 100)
                             }
-                            .padding(.top, 20)
-                        }
 
-                        AppTabBar(selectedTab: $selectedTab)
+                            // Habits
+                            VStack(alignment: .leading, spacing: 12) {
+                                Text("Daily Habits")
+                                    .font(.appHeadline)
+                                    .foregroundColor(AppTheme.shared.colorScheme.textPrimary)
+                                    .padding(.horizontal, 24)
+
+                                ForEach(dashboard.habits) { habit in
+                                    HabitCard(habit: habit) {
+                                        viewModel.toggleHabit(habit)
+                                    }
+                                    .padding(.horizontal, 24)
+                                }
+                            }
+
+                            // Weekly Progress
+                            VStack(alignment: .leading, spacing: 12) {
+                                Text("This Week")
+                                    .font(.appHeadline)
+                                    .foregroundColor(AppTheme.shared.colorScheme.textPrimary)
+                                    .padding(.horizontal, 24)
+
+                                WeeklyProgressChart(days: dashboard.weeklyProgress.days)
+                                    .padding(.horizontal, 24)
+                            }
+
+                            Spacer().frame(height: 100)
+                        }
+                        .padding(.top, 20)
                     }
                 }
             }

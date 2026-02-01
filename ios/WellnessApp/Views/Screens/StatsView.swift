@@ -14,30 +14,26 @@ struct StatsView: View {
                         viewModel.loadStats()
                     }
                 } else if !viewModel.stats.isEmpty {
-                    VStack(spacing: 0) {
-                        ScrollView {
-                            VStack(spacing: 20) {
-                                // Header
-                                HStack {
-                                    Text("Statistics")
-                                        .font(.appTitle1)
+                    ScrollView {
+                        VStack(spacing: 20) {
+                            // Header
+                            HStack {
+                                Text("Statistics")
+                                    .font(.appTitle1)
 
-                                    Spacer()
-                                }
-                                .padding(.horizontal, 24)
-
-                                // Stats Grid
-                                ForEach(viewModel.stats) { stat in
-                                    StatCard(stat: stat)
-                                        .padding(.horizontal, 24)
-                                }
-
-                                Spacer().frame(height: 100)
+                                Spacer()
                             }
-                            .padding(.top, 20)
-                        }
+                            .padding(.horizontal, 24)
 
-                        AppTabBar(selectedTab: .constant(.stats))
+                            // Stats Grid
+                            ForEach(viewModel.stats) { stat in
+                                StatCard(stat: stat)
+                                    .padding(.horizontal, 24)
+                            }
+
+                            Spacer().frame(height: 100)
+                        }
+                        .padding(.top, 20)
                     }
                 }
             }

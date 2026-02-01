@@ -15,60 +15,56 @@ struct CalendarView: View {
                         viewModel.loadEvents()
                     }
                 } else if !viewModel.events.isEmpty {
-                    VStack(spacing: 0) {
-                        ScrollView {
-                            VStack(spacing: 20) {
-                                // Header
-                                HStack {
-                                    Text("Calendar")
-                                        .font(.appTitle1)
+                    ScrollView {
+                        VStack(spacing: 20) {
+                            // Header
+                            HStack {
+                                Text("Calendar")
+                                    .font(.appTitle1)
 
-                                    Spacer()
-                                }
-                                .padding(.horizontal, 24)
+                                Spacer()
+                            }
+                            .padding(.horizontal, 24)
 
-                                // Calendar
-                                DatePicker(
-                                    "",
-                                    selection: $selectedDate,
-                                    displayedComponents: .date
-                                )
-                                .datePickerStyle(.graphical)
-                                .padding(.horizontal, 24)
-                                .background(AppTheme.shared.colorScheme.cardBackground)
-                                .cornerRadius(16)
+                            // Calendar
+                            DatePicker(
+                                "",
+                                selection: $selectedDate,
+                                displayedComponents: .date
+                            )
+                            .datePickerStyle(.graphical)
+                            .padding(.horizontal, 24)
+                            .background(AppTheme.shared.colorScheme.cardBackground)
+                            .cornerRadius(16)
 
-                                // Events for selected date
-                                VStack(alignment: .leading, spacing: 12) {
-                                    Text("Events")
-                                        .font(.appHeadline)
-                                        .foregroundColor(AppTheme.shared.colorScheme.textPrimary)
-                                        .padding(.horizontal, 24)
+                            // Events for selected date
+                            VStack(alignment: .leading, spacing: 12) {
+                                Text("Events")
+                                    .font(.appHeadline)
+                                    .foregroundColor(AppTheme.shared.colorScheme.textPrimary)
+                                    .padding(.horizontal, 24)
 
-                                    let todaysEvents = viewModel.eventsForDate(selectedDate)
+                                let todaysEvents = viewModel.eventsForDate(selectedDate)
 
-                                    if todaysEvents.isEmpty {
-                                        Text("No events scheduled")
-                                            .font(.appSubheadline)
-                                            .foregroundColor(AppTheme.shared.colorScheme.textSecondary)
-                                            .frame(maxWidth: .infinity)
-                                            .padding(.vertical, 40)
-                                    } else {
-                                        ForEach(todaysEvents) { event in
-                                            EventCard(event: event) {
-                                                viewModel.toggleEventCompletion(event)
-                                            }
-                                            .padding(.horizontal, 24)
+                                if todaysEvents.isEmpty {
+                                    Text("No events scheduled")
+                                        .font(.appSubheadline)
+                                        .foregroundColor(AppTheme.shared.colorScheme.textSecondary)
+                                        .frame(maxWidth: .infinity)
+                                        .padding(.vertical, 40)
+                                } else {
+                                    ForEach(todaysEvents) { event in
+                                        EventCard(event: event) {
+                                            viewModel.toggleEventCompletion(event)
                                         }
+                                        .padding(.horizontal, 24)
                                     }
                                 }
-
-                                Spacer().frame(height: 100)
                             }
-                            .padding(.top, 20)
-                        }
 
-                        AppTabBar(selectedTab: .constant(.calendar))
+                            Spacer().frame(height: 100)
+                        }
+                        .padding(.top, 20)
                     }
                 }
             }
