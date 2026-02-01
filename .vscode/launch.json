@@ -1,0 +1,24 @@
+{
+  "configurations": [
+    {
+      "type": "swift",
+      "request": "launch",
+      "args": [],
+      "cwd": "${workspaceFolder:Wellness}/ios",
+      "name": "Debug WellnessApp (ios)",
+      "target": "WellnessApp",
+      "configuration": "debug",
+      "preLaunchTask": "swift: Build Debug WellnessApp (ios)"
+    },
+    {
+      "type": "swift",
+      "request": "launch",
+      "args": [],
+      "cwd": "${workspaceFolder:Wellness}/ios",
+      "name": "Release WellnessApp (ios)",
+      "target": "WellnessApp",
+      "configuration": "release",
+      "preLaunchTask": "swift: Build Release WellnessApp (ios)"
+    }
+  ]
+}

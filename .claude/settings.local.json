@@ -7,7 +7,32 @@
       "Bash(gradlew.bat build:*)",
       "Bash(cmd:*)",
       "Bash(./gradlew.bat build --no-daemon)",
-      "Bash(./gradlew.bat:*)"
+      "Bash(./gradlew.bat:*)",
+      "Bash(tree:*)",
+      "Bash(find:*)",
+      "Bash(echo:*)",
+      "Bash(for file in Views/Components/*.swift Views/Screens/*.swift)",
+      "Bash(do echo \"Checking $file\")",
+      "Bash(done)",
+      "Bash(for:*)",
+      "Bash(xcodebuild:*)",
+      "Bash(swift package init:*)",
+      "Bash(python3 -c \"\nimport os\nimport uuid\n\ndef gen_id\\(\\):\n    return uuid.uuid4\\(\\).hex[:24].upper\\(\\)\n\n# Project identifiers\nproj_id = gen_id\\(\\)\ntarget_id = gen_id\\(\\)\nmain_group_id = gen_id\\(\\)\nproducts_group_id = gen_id\\(\\)\nconfig_list_id = gen_id\\(\\)\ndebug_id = gen_id\\(\\)\nrelease_id = gen_id\\(\\)\n\n# Get all Swift files\nswift_files = []\nfor root, dirs, files in os.walk\\(''WellnessApp''\\):\n    for f in files:\n        if f.endswith\\(''.swift''\\):\n            path = os.path.join\\(root, f\\)\n            rel = os.path.relpath\\(path, ''WellnessApp''\\)\n            swift_files.append\\(\\(gen_id\\(\\), path, rel\\)\\)\n\nprint\\(f''Found {len\\(swift_files\\)} Swift files''\\)\n\n# Build file refs\nfile_refs = ''\\\\n''.join\\([f''\\\\t\\\\t\\\\t{fid} /* {os.path.basename\\(rel\\)} */ = {{isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = \"\"{rel}\"\"; sourceTree = \"\"<group>\"\"; }};''\n    for fid, path, rel in swift_files]\\)\n\n# Build section headers\npbx = f''''''// !$*TF8*$!__NEW_LINE_e7abada7c6cee929__\n{{\n\\\\tarchiveVersion = 1;\n\\\\tclasses = {{\n\\\\t}};\n\\\\tobjectVersion = 56;\n\\\\tobjects = {{''''''\n\n# PBXBuildFile section\npbx += ''''''\n/* Begin PBXBuildFile section */\n''''''\nfor fid, path, rel in swift_files:\n    pbx += f''\\\\t\\\\t\\\\t{gen_id\\(\\)} /* {os.path.basename\\(rel\\)} in Sources */ = {{isa = PBXBuildFile; fileRef = {fid} /* {os.path.basename\\(rel\\)} */; }};\\\\n''\n\n# PBXFileReference section\npbx += ''''''/* End PBXBuildFile section */\n\n/* Begin PBXFileReference section */\n''''''\npbx += file_refs\npbx += f''\\\\t\\\\t\\\\t{target_id} /* WellnessApp.app */ = {{isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WellnessApp.app; sourceTree = BUILT_PRODUCTS_DIR; }};\\\\n''\npbx += ''/* End PBXFileReference section */\\\\n''\n\n# Write to file\nos.makedirs\\(''WellnessApp.xcodeproj'', exist_ok=True\\)\nwith open\\(''WellnessApp.xcodeproj/project.pbxproj'', ''w''\\) as f:\n    f.write\\(pbx\\)\n\nprint\\(''Created project.pbxproj with basic structure''\\)\n\")",
+      "Bash(xcrun xcodebuild:*)",
+      "Bash(git push:*)",
+      "Bash(brew install:*)",
+      "Bash(gh:*)",
+      "Bash(=== iOS项目状态总结 ===)",
+      "Bash(__NEW_LINE_7e94821ce93507d8__ ✅ Swift文件: 35个)",
+      "Bash(✅ 代码编译: 通过)",
+      "Bash(✅ DarkMode: 支持)",
+      "Bash(✅ MVVM架构: 完整)",
+      "Bash(__NEW_LINE_7e94821ce93507d8__ 📁 代码目录: WellnessApp/)",
+      "Bash(__NEW_LINE_7e94821ce93507d8__ 由于Xcode项目文件格式过于复杂，建议：)",
+      "Bash(1. 在Xcode中手动创建新项目)",
+      "Bash(2. 将WellnessApp目录拖入新项目)",
+      "Bash(3. 选择Copy items if needed)",
+      "Bash(__NEW_LINE_7e94821ce93507d8__ 项目代码已完全准备就绪！)"
     ]
   }
 }
