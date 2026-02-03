@@ -43,6 +43,9 @@ backend/
 │   └── test/                        # Test classes
 └── pom.xml                          # Maven dependencies
 ```
+
+中文
+
 ```
 backend/
 ├── pom.xml                          # Maven配置文件
